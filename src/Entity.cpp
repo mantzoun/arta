@@ -16,8 +16,20 @@ Entity::Entity(Logger* logger, TimeManager* timeMan, IdManager* idMan, id_t id, 
     this->name = name;
 }
 
-void Entity::tikAdvance(void) {
-    // Do nothing in Base class
-}
+    std::string Entity::nameGet(void) {
+        return name;
+    }
+
+    void Entity::nameSet(std::string name) {
+        this->name = name;
+    }
+
+    id_t Entity::idGet(void) {
+        return id;
+    }
+
+    void Entity::idSet(id_t id) {
+        this->id = id;
+    }
 
 }  // namespace arta

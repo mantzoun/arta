@@ -10,8 +10,10 @@
 #define INCLUDE_UNIVERSE_H_
 
 #include <string>
+#include <list>
 
 #include "include/Entity.h"
+#include "include/System.h"
 
 namespace arta {
 /**
@@ -19,10 +21,14 @@ namespace arta {
  *
  * @brief Universe class
  */
-class Universe {
+class Universe : public Entity {
    private:
+      std::list<System*> systems;
 
    public:
+      using Entity::Entity;
+      void tikAdvance(void) override;
+      void init(void);
 };
 }  // namespace arta
 

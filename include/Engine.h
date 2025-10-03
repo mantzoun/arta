@@ -10,12 +10,11 @@
 #define INCLUDE_ENGINE_H_
 
 #include <string>
-#include <list>
 
 #include "include/IdManager.h"
 #include "include/Logger.h"
 #include "include/TimeManager.h"
-#include "include/System.h"
+#include "include/Universe.h"
 
 namespace arta {
 /**
@@ -29,11 +28,11 @@ class Engine  {
     Logger logger = Logger(ARTA_LOG_DEBUG);
     IdManager idManager;
 
-    std::list<System*> systems;
+    Universe universe = Universe(&logger, &timeManager, &idManager, idManager.idGet(), "Euclid");
 
    public:
-    void init(void);
     void tik(void);
+    void init(void);
 };
 }  // namespace arta
 

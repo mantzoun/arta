@@ -69,13 +69,13 @@ int main(int argc, char **argv) {
     // #endif /* ENGINE_INIT_FROM_DISCORD */
 
     Engine engine;
+    engine.init();
 
     while (1) {
         // game_loop();
         // engine.execute_game_loop();
-        usleep(60 * 1000 * 1000);
+        usleep(2 * 1000 * 1000);
         engine.tik();
-        printf("TEST\n");
     }
 }
 }  // namespace arta

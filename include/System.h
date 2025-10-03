@@ -10,8 +10,10 @@
 #define INCLUDE_SYSTEM_H_
 
 #include <string>
+#include <list>
 
 #include "include/Entity.h"
+#include "include/Area.h"
 
 namespace arta {
 /**
@@ -21,10 +23,12 @@ namespace arta {
  */
 class System : public Entity {
    private:
-
+    std::list<Area*> areas;
 
    public:
     using Entity::Entity;
+    void init(void);
+    void tikAdvance(void) override;
 
 };
 }  // namespace arta

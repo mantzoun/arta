@@ -22,7 +22,7 @@ namespace arta {
  * @brief Base class
  */
 class Entity {
-   private:
+   protected:
     id_t id;
     std::string name = "uninit";
     Logger* logger;
@@ -39,7 +39,13 @@ class Entity {
      */
     Entity(Logger* logger, TimeManager* timeMan, IdManager* idMan, id_t id, std::string name);
 
-    virtual void tikAdvance(void);
+    virtual void tikAdvance(void) = 0;
+
+    std::string nameGet(void);
+    void nameSet(std::string name);
+
+    id_t idGet(void);
+    void idSet(id_t id);
 };
 }  // namespace arta
 

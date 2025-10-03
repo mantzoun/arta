@@ -9,15 +9,12 @@
 #include "include/Engine.h"
 
 namespace arta {
-void Engine::init(void) {
-    for (int i = 0; i < 5; i++) {
-        System * s = new System(&logger, &timeManager, &idManager, idManager.idGet(), std::format("input : {}", i));
-
-        systems.push_back(s);
-    }
+void Engine::tik(void) {
+    universe.tikAdvance();
 }
 
-void Engine::tik(void) {
+void Engine::init(void) {
+    universe.init();
 }
 
 }  // namespace arta
