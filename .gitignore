@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+obj/
 
 # Precompiled Headers
 *.gch
@@ -36,6 +37,10 @@
 *.exe
 *.out
 *.app
+bin/
 
 # debug information files
 *.dwo
+
+# VScode
+.vscode/

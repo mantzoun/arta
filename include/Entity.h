@@ -37,7 +37,9 @@ class Entity {
      * @param timeMan   Pointer to the time manager object
      * @param idMan     Pointer to the Id manager object
      */
-    Entity(Logger* logger, TimeManager* timeMan, IdManager* idMan);
+    Entity(Logger* logger, TimeManager* timeMan, IdManager* idMan, id_t id, std::string name);
+
+    virtual void tikAdvance(void);
 };
 }  // namespace arta
 

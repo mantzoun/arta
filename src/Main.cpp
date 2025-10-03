@@ -11,8 +11,7 @@
 #include <iostream>
 #include <map>
 
-#include "include/Logger.h"
-#include "include/TimeManager.h"
+#include "include/Engine.h"
 
 // #include "ext/json.hpp"
 // #include "include/lux_utils.h"
@@ -29,8 +28,8 @@ namespace arta {
 // static DiscordBot bot;
 // Engine engine;
 
-Logger logger = Logger(ARTA_LOG_DEBUG);
-TimeManager timeManager;
+// Logger logger = Logger(ARTA_LOG_DEBUG);
+// TimeManager timeManager;
 
 // void game_loop() {
 //     logger.info("here");
@@ -69,11 +68,14 @@ int main(int argc, char **argv) {
     //     engine.create_channels();
     // #endif /* ENGINE_INIT_FROM_DISCORD */
 
+    Engine engine;
+
     while (1) {
         // game_loop();
         // engine.execute_game_loop();
         usleep(60 * 1000 * 1000);
-        logger.debug("TEST");
+        engine.tik();
+        printf("TEST\n");
     }
 }
 }  // namespace arta
