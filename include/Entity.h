@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "include/IdManager.h"
+#include "include/Utils.h"
 #include "include/Logger.h"
 #include "include/TimeManager.h"
 
@@ -27,7 +27,7 @@ class Entity {
     std::string name = "uninit";
     Logger* logger;
     TimeManager* timeManager;
-    IdManager* idManager;
+    Utils* utils;
 
    public:
     /**
@@ -35,9 +35,9 @@ class Entity {
      *
      * @param logger    Pointer to the logger object
      * @param timeMan   Pointer to the time manager object
-     * @param idMan     Pointer to the Id manager object
+     * @param utils     Pointer to the Id manager object
      */
-    Entity(Logger* logger, TimeManager* timeMan, IdManager* idMan, id_t id, std::string name);
+    Entity(Logger* logger, TimeManager* timeMan, Utils* utils, id_t id, std::string name);
 
     virtual void tikAdvance(void) = 0;
 

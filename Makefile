@@ -21,7 +21,7 @@ INCLUDES = -I.
 LIB = -ldpp \
       -lgcov \
 
-FILES = Main.cpp Logger.cpp TimeManager.cpp IdManager.cpp Entity.cpp Universe.cpp Engine.cpp System.cpp Area.cpp
+FILES = Main.cpp Logger.cpp TimeManager.cpp Utils.cpp Entity.cpp Universe.cpp Engine.cpp System.cpp Area.cpp Modifier.cpp
 
 TEST_FILES = test_main.cpp
 

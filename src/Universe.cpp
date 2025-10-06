@@ -9,7 +9,7 @@
 namespace arta {
 void Universe::init(void) {
     for (int i = 0; i < 5; i++) {
-        System * s = new System(this->logger, timeManager, idManager, idManager->idGet(), "system " + std::to_string(i));
+        System * s = new System(this->logger, timeManager, utils, utils->idGet(), "system " + std::to_string(i));
 
         s->init();
 

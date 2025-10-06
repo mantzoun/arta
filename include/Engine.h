@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "include/IdManager.h"
+#include "include/Utils.h"
 #include "include/Logger.h"
 #include "include/TimeManager.h"
 #include "include/Universe.h"
@@ -26,9 +26,9 @@ class Engine  {
    private:
     TimeManager timeManager;
     Logger logger = Logger(ARTA_LOG_DEBUG);
-    IdManager idManager;
+    Utils utils;
 
-    Universe universe = Universe(&logger, &timeManager, &idManager, idManager.idGet(), "Euclid");
+    Universe universe = Universe(&logger, &timeManager, &utils, utils.idGet(), "Euclid");
 
    public:
     void tik(void);
