@@ -13,21 +13,11 @@
 
 #include <string>
 
-#include "include/Area.h"
-#include "include/System.h"
+#include "include/DataTypes.h"
+#include "include/EffectConsumer.h"
 #include "include/Utils.h"
 
 namespace arta {
-     enum SystemModifierType{
-        SYSTEM_MODIFIER_SOLAR_ACTIVITY,
-        SYSTEM_MODIFER_MAX
-    };
-
-    enum AreaModifierType {
-        AREA_MODIFIER_WAR,
-        AREA_MODIFER_MAX
-    };
-
     struct SystemModifierEffect {
         int turnsActive;
         int turnsMinimum;
@@ -47,16 +37,16 @@ namespace arta {
     };
 
     struct AreaModifierEntry {
-        AreaModifierEffect * (*cb)(Area *);
+        AreaModifierEffect * (*cb)(EffectConsumer *);
         int chanceToFire;
     };
 
     struct SystemModifierEntry {
-        SystemModifierEffect * (*cb)(System *);
+        SystemModifierEffect * (*cb)(EffectConsumer *);
         int chanceToFire;
     };
 
-    bool isApplicable(Area * area, AreaType validType, AreaModifierType type){
+    bool isApplicable(EffectConsumer * area, AreaType validType, AreaModifierType type){
         if (area->typeGet() != validType) {
             return NULL;
         }
@@ -67,7 +57,7 @@ namespace arta {
         return true;
     }
 
-    AreaModifierEffect * planetaryWar(Area * area) {
+    AreaModifierEffect * planetaryWar(EffectConsumer * area) {
         if (! isApplicable(area, AREA_TYPES_PLANET, AREA_MODIFIER_WAR)) {
             return NULL;
         }
@@ -94,7 +84,7 @@ class Modifiers {
     private:
 
     public:
-        static AreaModifierEffect * rollNewModifier(Area * area, Utils * utils) {
+        static AreaModifierEffect * rollNewModifier(EffectConsumer * area, Utils * utils) {
             for (auto& modifier : AreaModifiers) {
                     if (utils->roll(2000) < modifier.chanceToFire) {
                         AreaModifierEffect * effect = modifier.cb(area) {

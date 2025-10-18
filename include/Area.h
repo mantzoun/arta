@@ -12,18 +12,12 @@
 #include <string>
 #include <unordered_set>
 
+#include "include/DataTypes.h"
 #include "include/Entity.h"
 #include "include/Modifier.h"
 
 namespace arta {
 typedef int64_t pop_t;
-
-enum AreaType {
-    AREA_TYPES_PLANET,
-    AREA_TYPES_STATION,
-    AREA_TYPES_MAX
-};
-
 /**
  * @class Area
  *
