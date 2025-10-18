@@ -10,7 +10,7 @@ namespace arta {
 void Area::tikAdvance(void) {
     logger->debug("Area " + name + " type " + std::to_string(type) + " population " + std::to_string(population));
 
-    AreaModifierEffect * effect = Modifiers::rollNewModifier(this, utils);
+    ConsumerModifierEffect * effect = (ConsumerModifierEffect *) Modifiers::rollNewModifier(this, utils);
 
     if (effect != NULL) {
         logger->info(name + " New modifier " + effect->title);
@@ -38,12 +38,5 @@ void Area::typeSet(AreaType t) {
 
 AreaType Area::typeGet(void) {
     return type;
-}
-
-bool Area::modifierIsActive(AreaModifierType type) {
-    if (activeModifiers.contains(type)) {
-        return true;
-    }
-    return false;
 }
 }

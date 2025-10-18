@@ -13,6 +13,7 @@
 #include <list>
 
 #include "include/Entity.h"
+#include "include/EffectConsumer.h"
 #include "include/Area.h"
 
 namespace arta {
@@ -21,7 +22,7 @@ namespace arta {
  *
  * @brief System class
  */
-class System : public Entity {
+class System : public Entity, public EffectConsumer {
    private:
     std::list<Area*> areas;
 

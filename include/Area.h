@@ -10,7 +10,6 @@
 #define INCLUDE_AREA_H_
 
 #include <string>
-#include <unordered_set>
 
 #include "include/DataTypes.h"
 #include "include/Entity.h"
@@ -23,12 +22,10 @@ typedef int64_t pop_t;
  *
  * @brief Area class
  */
-class Area : public Entity {
+class Area : public Entity, public EffectConsumer {
    private:
     AreaType type;
     pop_t population;
-    std::unordered_set<AreaModifierType> activeModifiers;
-    std::unordered_set<AreaModifierEffect*> activeModifierEffects;
 
    public:
     using Entity::Entity;
@@ -40,9 +37,6 @@ class Area : public Entity {
 
     void typeSet(AreaType t);
     AreaType typeGet(void);
-
-    bool modifierIsActive(AreaModifierType type);
-
 };
 }  // namespace arta
 

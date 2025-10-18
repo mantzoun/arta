@@ -9,21 +9,35 @@
 
 namespace arta {
 enum AreaType {
-    AREA_TYPES_PLANET,
-    AREA_TYPES_STATION,
-    AREA_TYPES_MAX
+    AREA_TYPE_PLANET,
+    AREA_TYPE_STATION,
+    AREA_TYPE_MAX
 };
 
-enum SystemModifierType{
-    SYSTEM_MODIFIER_SOLAR_ACTIVITY,
-    SYSTEM_MODIFER_MAX
+enum ConsumerModifierType{
+    CONSUMER_MODIFIER_TYPE_SOLAR_ACTIVITY,
+    CONSUMER_MODIFIER_TYPE_WAR,
+    CONSUMER_MODIFIER_TYPE_MAX
 };
 
-enum AreaModifierType {
-    AREA_MODIFIER_WAR,
-    AREA_MODIFER_MAX
+enum ConsumerType {
+    CONSUMER_TYPE_SYSTEM,
+    CONSUMER_TYPE_PLANET,
+    CONSUMER_TYPE_STATION,
+    CONSUMER_TYPE_MAX
 };
 
+struct ConsumerModifierEffect {
+    int turnsActive;
+    int turnsMinimum;
+    int chanceToEnd;    // chance for effect to finish each turn after the minimum turns have passed (percentage)
+    std::string title;
+    ConsumerModifierType type;
+    // Area Specific
+    int populationYearlyIncfluence; // effect on population growth +/- in one-thousandths per year
+    // System specific
+    ConsumerModifierType areaAdditionalEfect; //for system effects, also apply this effect to areas
+};
 
 }  // namespace arta
 
