@@ -26,6 +26,12 @@ class Area : public Entity, public EffectConsumer {
    private:
     AreaType type;
     pop_t population;
+    pop_t populationMax;
+    int   populationBaseGrowth; // points per thousand
+
+    void rollForNewEffect(void);
+    void processActiveEffects(void);
+    void populationUpdate(void);
 
    public:
     using Entity::Entity;
@@ -37,6 +43,9 @@ class Area : public Entity, public EffectConsumer {
 
     void typeSet(AreaType t);
     AreaType typeGet(void);
+
+    void populationBaseGrowthSet(int b);
+    int populationBaseGrowthGet(void);
 };
 }  // namespace arta
 

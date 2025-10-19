@@ -23,7 +23,7 @@ namespace arta {
  */
 class Universe : public Entity {
    private:
-      std::list<System*> systems;
+      std::list<System> systems;
 
    public:
       using Entity::Entity;

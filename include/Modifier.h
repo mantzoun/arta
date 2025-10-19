@@ -17,7 +17,7 @@
 
 namespace arta {
     struct ModifierEntry {
-        ConsumerModifierEffect * (*cb)(EffectConsumer *);
+        ConsumerModifierEffect * (*cb)(EffectConsumer&);
         int chanceToFire;
     };
 
@@ -25,8 +25,8 @@ class Modifiers {
     private:
 
     public:
-        static bool isApplicable(EffectConsumer * consumer, ConsumerType validType, ConsumerModifierType type);
-        static void * rollNewModifier(EffectConsumer * consumer, Utils * utils);
+        static bool isApplicable(EffectConsumer& consumer, ConsumerType validType, ConsumerModifierType type);
+        static void * rollNewModifier(EffectConsumer& consumer, Utils * utils);
 };
 }  // namespace arta
 

@@ -10,14 +10,54 @@ namespace arta {
 void Area::tikAdvance(void) {
     logger->debug("Area " + name + " type " + std::to_string(type) + " population " + std::to_string(population));
 
-    ConsumerModifierEffect * effect = (ConsumerModifierEffect *) Modifiers::rollNewModifier(this, utils);
+    rollForNewEffect();
+
+    processActiveEffects();
+
+    populationUpdate();
+}
+
+void Area::populationUpdate(void) {
+    pop_t popMod =  (populationBaseGrowth * population) / (365 * 1000);
+    logger->info(name + " - population organic growth " + std::to_string(popMod));
+    populationMod(popMod);
+}
+
+void Area::rollForNewEffect(void) {
+    ConsumerModifierEffect * effect = (ConsumerModifierEffect *) Modifiers::rollNewModifier(*this, utils);
 
     if (effect != NULL) {
-        logger->info(name + " New modifier " + effect->title);
+        logger->info(name + " - " + effect->startingText);
 
         activeModifiers.insert(effect->type);
-        activeModifierEffects.insert(effect);
+        ConsumerModifierEffect effectLocalCopy = *effect;
+        activeModifierEffects.push_back(effectLocalCopy);
+        delete effect;
     }
+}
+
+void Area::processActiveEffects(void) {
+    for (auto it = activeModifierEffects.begin(); it != activeModifierEffects.end(); ) {
+    auto& effect = *it;
+
+    if (effect.turnsActive >= effect.turnsMinimum) {
+        if (utils->roll(1, 100) < effect.chanceToEnd) {
+            activeModifiers.erase(effect.type);
+            logger->info(name + " - " + effect.endingText);
+            it = activeModifierEffects.erase(it);
+            continue;
+        }
+    }
+
+    // Still Active
+    effect.turnsActive++;
+
+    pop_t popEffect = (effect.populationYearlyIncfluence * population) / (365 * 1000);
+    logger->info(name + " - population affected by " + std::to_string(popEffect) + " by " + effect.title);
+    populationMod(popEffect);
+
+    ++it;  // only increment if not erased
+}
 }
 
 void Area::populationSet(pop_t pop) {
@@ -38,5 +78,13 @@ void Area::typeSet(AreaType t) {
 
 AreaType Area::typeGet(void) {
     return type;
+}
+
+void Area::populationBaseGrowthSet(int b) {
+    populationBaseGrowth = b;
+}
+
+int Area::populationBaseGrowthGet(void) {
+    return populationBaseGrowth;
 }
 }

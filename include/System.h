@@ -24,7 +24,7 @@ namespace arta {
  */
 class System : public Entity, public EffectConsumer {
    private:
-    std::list<Area*> areas;
+    std::list<Area> areas;
 
    public:
     using Entity::Entity;

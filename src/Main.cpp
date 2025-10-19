@@ -36,8 +36,7 @@ namespace arta {
 //     bot.post_message("syslog", "here");
 // }
 
-// void from_json(const nlohmann::json& j,
-//                 lux_conf_t & c) {  // NOLINT(runtime/references)
+// void from_json(const nlohmann::json& j, lux_conf_t & c) {  // NOLINT(runtime/references)
 //     j.at("bot_token").get_to(c.bot_token);
 // }
 

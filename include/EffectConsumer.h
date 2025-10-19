@@ -10,6 +10,7 @@
 #define INCLUDE_EFFECTCONSUMER_H_
 
 #include <unordered_set>
+#include <list>
 
 #include "include/DataTypes.h"
 
@@ -23,7 +24,7 @@ class EffectConsumer {
    protected:
       ConsumerType cons_type;
       std::unordered_set<ConsumerModifierType> activeModifiers;
-      std::unordered_set<ConsumerModifierEffect*> activeModifierEffects;
+      std::list<ConsumerModifierEffect> activeModifierEffects;
 
    public:
       inline bool modifierIsActive(ConsumerModifierType type) {
@@ -40,7 +41,6 @@ class EffectConsumer {
       inline void consumerTypeSet(ConsumerType type) {
          cons_type = type;
       }
-
 };
 }  // namespace arta
 

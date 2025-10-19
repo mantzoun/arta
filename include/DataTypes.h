@@ -32,6 +32,8 @@ struct ConsumerModifierEffect {
     int turnsMinimum;
     int chanceToEnd;    // chance for effect to finish each turn after the minimum turns have passed (percentage)
     std::string title;
+    std::string startingText;
+    std::string endingText;
     ConsumerModifierType type;
     // Area Specific
     int populationYearlyIncfluence; // effect on population growth +/- in one-thousandths per year

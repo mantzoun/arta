@@ -15,11 +15,11 @@ id_t Utils::idGet(void) {
     return nextId++;
 }
 
-int Utils::roll(int bound) {
-    return rand() % bound;
+int Utils::roll(int max) {
+    return rand() % (1 + max);
 }
 
-int Utils::roll(int lower_bound, int upper_bound) {
-    return lower_bound + (rand() %(upper_bound - lower_bound));
+int Utils::roll(int min, int max) {
+    return min + (rand() %(1 + max - min));
 }
 }  // namespace arta
