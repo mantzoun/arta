@@ -23,5 +23,9 @@ void Universe::tikAdvance(void) {
     for (std::list<System>::iterator it = systems.begin(); it != systems.end(); ++it){
         (*it).tikAdvance();
     }
+
+    // nlohmann::json json;
+    // to_json(json, *this);
+    // saveFile("uni.json", json);
 }
 }

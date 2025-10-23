@@ -38,6 +38,7 @@ class Entity {
      * @param utils     Pointer to the Id manager object
      */
     Entity(Logger* logger, TimeManager* timeMan, Utils* utils, id_t id, std::string name);
+    Entity() = default;
 
     virtual void tikAdvance(void) = 0;
 

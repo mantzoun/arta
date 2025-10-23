@@ -12,6 +12,7 @@
 #include <string>
 #include <list>
 
+#include "ext/json.hpp"
 #include "include/Entity.h"
 #include "include/System.h"
 
@@ -29,7 +30,30 @@ class Universe : public Entity {
       using Entity::Entity;
       void tikAdvance(void) override;
       void init(void);
+
+   friend void to_json(nlohmann::json& j, \
+                     const Universe& u);  // NOLINT(runtime/references)
+   friend void from_json(const nlohmann::json& j, \
+                     Universe & u);  // NOLINT(runtime/references)
 };
+
+inline
+void to_json(nlohmann::json& j, \
+             const Universe & u) {  // NOLINT(runtime/references)
+  j = nlohmann::json{
+      {"id", u.id},
+      {"name", u.name},
+      {"systems", u.systems},
+  };
+}
+
+inline
+void from_json(const nlohmann::json& j,
+                Universe & u) {  // NOLINT(runtime/references)
+   j.at("id").get_to(u.id);
+   j.at("name").get_to(u.name);
+   j.at("systems").get_to(u.systems);
+}
 }  // namespace arta
 
 #endif  // INCLUDE_UNIVERSE_H_
