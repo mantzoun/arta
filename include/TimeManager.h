@@ -12,10 +12,9 @@
 
 #include <string>
 
+#include "include/DataTypes.h"
+
 namespace arta {
-
-typedef u_int64_t tik_t;
-
 /**
  * @class TimeManager
  *

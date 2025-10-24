@@ -37,6 +37,8 @@ class Area : public Entity, public EffectConsumer {
     using Entity::Entity;
     void tikAdvance(void) override;
 
+    void init();
+
     void populationSet(pop_t pop);
     void populationMod(pop_t diff);
     pop_t populationGet(void);

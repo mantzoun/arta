@@ -11,6 +11,7 @@
 
 namespace arta {
 typedef int64_t pop_t;
+typedef u_int64_t tik_t;
 
 enum AreaType {
     AREA_TYPE_PLANET,

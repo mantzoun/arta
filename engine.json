@@ -1,0 +1,469 @@
+{
+    "time": 32,
+    "universe": {
+        "id": 0,
+        "name": "Euclid",
+        "systems": [
+            {
+                "activeModifierEffects": [],
+                "activeModifiers": [],
+                "areas": [
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 2,
+                        "id": 2,
+                        "name": "system 0 Area 0",
+                        "population": 5000876771,
+                        "populationBaseGrowth": 2,
+                        "populationMax": 140728563409312,
+                        "type": 1
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 1,
+                        "id": 3,
+                        "name": "system 0 Area 1",
+                        "population": 5000438369,
+                        "populationBaseGrowth": 4,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 1,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 4,
+                        "name": "system 0 Area 2",
+                        "population": 4999068569,
+                        "populationBaseGrowth": 1,
+                        "populationMax": 140728563409312,
+                        "type": 2
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 2,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 5,
+                        "name": "system 0 Area 3",
+                        "population": 5002959710,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 1,
+                        "id": 6,
+                        "name": "system 0 Area 4",
+                        "population": 5002685593,
+                        "populationBaseGrowth": 9,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    }
+                ],
+                "cons_type": 0,
+                "id": 1,
+                "name": "system 0"
+            },
+            {
+                "activeModifierEffects": [],
+                "activeModifiers": [],
+                "areas": [
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 1,
+                        "id": 8,
+                        "name": "system 1 Area 0",
+                        "population": 5003179021,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 2,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 9,
+                        "name": "system 1 Area 1",
+                        "population": 5000821962,
+                        "populationBaseGrowth": 5,
+                        "populationMax": 140728563409312,
+                        "type": 2
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 3,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 10,
+                        "name": "system 1 Area 2",
+                        "population": 4998959002,
+                        "populationBaseGrowth": 1,
+                        "populationMax": 140728563409312,
+                        "type": 2
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 2,
+                        "id": 11,
+                        "name": "system 1 Area 3",
+                        "population": 5000438358,
+                        "populationBaseGrowth": 1,
+                        "populationMax": 140728563409312,
+                        "type": 1
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 7,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 12,
+                        "name": "system 1 Area 4",
+                        "population": 5000109570,
+                        "populationBaseGrowth": 3,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    }
+                ],
+                "cons_type": 0,
+                "id": 7,
+                "name": "system 1"
+            },
+            {
+                "activeModifierEffects": [],
+                "activeModifiers": [],
+                "areas": [
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 3959955856,
+                        "id": 14,
+                        "name": "system 2 Area 0",
+                        "population": 5002630790,
+                        "populationBaseGrowth": 6,
+                        "populationMax": 140728563409312,
+                        "type": 2
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 3959955856,
+                        "id": 15,
+                        "name": "system 2 Area 1",
+                        "population": 5004385408,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 2
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 3,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 16,
+                        "name": "system 2 Area 2",
+                        "population": 5000328752,
+                        "populationBaseGrowth": 4,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 2,
+                        "id": 17,
+                        "name": "system 2 Area 3",
+                        "population": 5004385408,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 1
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 10,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 18,
+                        "name": "system 2 Area 4",
+                        "population": 5001589254,
+                        "populationBaseGrowth": 7,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    }
+                ],
+                "cons_type": 0,
+                "id": 13,
+                "name": "system 2"
+            },
+            {
+                "activeModifierEffects": [],
+                "activeModifiers": [],
+                "areas": [
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 2,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 20,
+                        "name": "system 3 Area 0",
+                        "population": 5002411491,
+                        "populationBaseGrowth": 8,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 1,
+                        "id": 21,
+                        "name": "system 3 Area 1",
+                        "population": 5002521126,
+                        "populationBaseGrowth": 9,
+                        "populationMax": 140728563409312,
+                        "type": 2
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 2,
+                        "id": 22,
+                        "name": "system 3 Area 2",
+                        "population": 5003946695,
+                        "populationBaseGrowth": 9,
+                        "populationMax": 140728563409312,
+                        "type": 1
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 5,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 23,
+                        "name": "system 3 Area 3",
+                        "population": 5003014541,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 2,
+                        "id": 24,
+                        "name": "system 3 Area 4",
+                        "population": 5004385408,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 1
+                    }
+                ],
+                "cons_type": 0,
+                "id": 19,
+                "name": "system 3"
+            },
+            {
+                "activeModifierEffects": [],
+                "activeModifiers": [],
+                "areas": [
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 2,
+                        "id": 26,
+                        "name": "system 4 Area 0",
+                        "population": 5002630790,
+                        "populationBaseGrowth": 6,
+                        "populationMax": 140728563409312,
+                        "type": 1
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 1,
+                        "id": 27,
+                        "name": "system 4 Area 1",
+                        "population": 4999506862,
+                        "populationBaseGrowth": 2,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    },
+                    {
+                        "activeModifierEffects": [
+                            {
+                                "areaAdditionalEfect": 0,
+                                "chanceToEnd": 50,
+                                "endingText": "The war is over",
+                                "populationYearlyIncfluence": -4,
+                                "startingText": "Global conflict has begun",
+                                "title": "WAR!",
+                                "turnsActive": 5,
+                                "turnsMinimum": 5,
+                                "type": 1
+                            }
+                        ],
+                        "activeModifiers": [
+                            1
+                        ],
+                        "cons_type": 1,
+                        "id": 28,
+                        "name": "system 4 Area 2",
+                        "population": 5000547950,
+                        "populationBaseGrowth": 4,
+                        "populationMax": 140728563409312,
+                        "type": 2
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 2,
+                        "id": 29,
+                        "name": "system 4 Area 3",
+                        "population": 5004385408,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 1
+                    },
+                    {
+                        "activeModifierEffects": [],
+                        "activeModifiers": [],
+                        "cons_type": 1,
+                        "id": 30,
+                        "name": "system 4 Area 4",
+                        "population": 5003124197,
+                        "populationBaseGrowth": 10,
+                        "populationMax": 140728563409312,
+                        "type": 0
+                    }
+                ],
+                "cons_type": 0,
+                "id": 25,
+                "name": "system 4"
+            }
+        ]
+    }
+}

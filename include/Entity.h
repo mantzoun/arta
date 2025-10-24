@@ -47,6 +47,10 @@ class Entity {
 
     id_t idGet(void);
     void idSet(id_t id);
+
+    void loggerSet(Logger* l);
+    void utilsSet(Utils* u);
+    void timeManagerSet(TimeManager* t);
 };
 }  // namespace arta
 

@@ -11,6 +11,7 @@
 
 #include <string>
 
+#include "ext/json.hpp"
 #include "include/Utils.h"
 #include "include/Logger.h"
 #include "include/TimeManager.h"
@@ -33,7 +34,31 @@ class Engine  {
    public:
     void tik(void);
     void init(void);
+
+    friend void to_json(nlohmann::json& j, \
+                     Engine& e);  // NOLINT(runtime/references)
+    friend void from_json(const nlohmann::json& j, \
+                     Engine & e);  // NOLINT(runtime/references)
 };
+
+inline
+void to_json(nlohmann::json& j, \
+             Engine & e) {  // NOLINT(runtime/references)
+    j = nlohmann::json{
+      {"time", e.timeManager.timeGet()},
+      {"universe", e.universe},
+    };
+}
+
+inline
+void from_json(const nlohmann::json& j,
+                Engine & e) {  // NOLINT(runtime/references)
+    tik_t time;
+    j.at("time").get_to(time);
+    j.at("universe").get_to(e.universe);
+
+    e.timeManager.timeSet(time);
+}
 }  // namespace arta
 
 #endif  // INCLUDE_ENGINE_H_

@@ -17,6 +17,8 @@ void Area::tikAdvance(void) {
     populationUpdate();
 }
 
+void Area::init(void) {}
+
 void Area::populationUpdate(void) {
     pop_t popMod =  (populationBaseGrowth * population) / (365 * 1000);
     logger->info(name + " - population organic growth " + std::to_string(popMod));

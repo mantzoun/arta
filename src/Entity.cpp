@@ -32,4 +32,15 @@ Entity::Entity(Logger* logger, TimeManager* timeMan, Utils* utils, id_t id, std:
         this->id = id;
     }
 
+    void Entity::loggerSet(Logger* l) {
+        logger = l;
+    }
+
+    void Entity::utilsSet(Utils* u) {
+        utils = u;
+    }
+
+    void Entity::timeManagerSet(TimeManager* t) {
+        timeManager = t;
+    }
 }  // namespace arta
