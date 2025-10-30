@@ -23,7 +23,7 @@ LIB = -ldpp \
       -lgcov \
 
 FILES = Main.cpp TimeManager.cpp Entity.cpp Universe.cpp Engine.cpp System.cpp Area.cpp Modifier.cpp
-DISCORD_FILES = DiscordMain.cpp
+DISCORD_FILES = DiscordMain.cpp DiscordBot.cpp DiscordChannel.cpp DiscordGuild.cpp DiscordCommands.cpp
 COMMON_FILES = Logger.cpp IO.cpp Utils.cpp
 
 TEST_FILES = test_main.cpp

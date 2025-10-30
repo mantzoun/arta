@@ -22,7 +22,7 @@ void IO::fifoRead(void) {
     while (!fifoStop && !fifo.fail()){
         while (std::getline(fifo, line)){
             logger->debug("IO: fifo input: " + line);
-            //consumer->messageCb(&line);
+            consumer->messageCb(&line);
         }
         if (fifo.eof()){
             fifo.clear();

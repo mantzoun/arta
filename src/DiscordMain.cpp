@@ -16,7 +16,7 @@
 #include "include/IO.h"
 
 // #include "include/discord_postman.h"
-// #include "include/discord_bot.h"
+#include "include/DiscordBot.h"
 
 namespace arta {
     typedef struct {
@@ -24,7 +24,7 @@ namespace arta {
     } arta_discord_conf_t;
 
     static arta_discord_conf_t config;
-    // static DiscordBot bot;
+    static DiscordBot bot;
 
     Logger logger = Logger(ARTA_LOG_DEBUG);
 
@@ -39,20 +39,20 @@ namespace arta {
         logger.info("Starting Discord Bot\n");
         from_json(loadFile("config.json"), config);
 
-        io.fifoInit("/tmp/discord_client.fifo");
         io.setLogger(&logger);
+        io.fifoInit("/tmp/discord_client.fifo");
 
-        // bot.set_logger(&logger);
+        bot.set_logger(&logger);
 
         std::string id = "myid";
-        // bot.init(config.bot_token, id);
+        bot.init(config.bot_token, id);
 
-        // while (!bot.init_complete) {
-        //     logger.debug("Waiting for bot init");
-        //     usleep(5 * 1000 * 1000);
-        // }
+        while (!bot.init_complete) {
+            logger.debug("Waiting for bot init");
+            usleep(5 * 1000 * 1000);
+        }
 
-        // io.set_discord_bot(&bot);
+        io.setConsumer(&bot);
 
         while (1) {
             usleep(60 * 1000 * 1000);
