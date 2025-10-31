@@ -19,6 +19,7 @@ void Universe::init(void) {
 
 void Universe::tikAdvance(void) {
     logger->debug("Universe " + name + " advancing");
+    utils->sendMessage("syslog;;Universe " + name + " advancing, turn " + std::to_string(timeManager->timeGet()));
 
     for (std::list<System>::iterator it = systems.begin(); it != systems.end(); ++it){
         (*it).tikAdvance();

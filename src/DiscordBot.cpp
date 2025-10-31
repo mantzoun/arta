@@ -5,8 +5,10 @@
  *
  * implementation of CDB_DiscordBot methods
  */
-#include<thread>
+#include <thread>
 #include <unistd.h>
+#include <vector>
+#include <sstream>
 
 #include "include/DiscordBot.h"
 
@@ -21,6 +23,9 @@ DiscordBot::DiscordBot(void) {
 void DiscordBot::ChildChannelCreateDelayed(std::string channel, std::string parent) {
   int retries = 10;
   DiscordChannel * c = this->guild->channelGet(parent, "");
+
+  //put all discord api calls in one thread
+  usleep(2000 * 1000);
 
   while ((retries > 0) && (c == NULL)) {
       retries--;
@@ -56,24 +61,40 @@ void DiscordBot::MessagePostDelayed(std::string channel, std::string parent, std
 // ===================================================================
 //                          INTERFACE
 // ===================================================================
-void DiscordBot::messageCb(std::string * message) {
-  logger->info(*message);
+std::vector<std::string> messageSplit(const std::string& input, char delimiter) {
+    std::vector<std::string> tokens;
+    std::stringstream ss(input);
+    std::string item;
+
+    while (std::getline(ss, item, delimiter)) {
+        tokens.push_back(item);
+    }
+
+    return tokens;
+}
+
+void DiscordBot::messageCb(const std::string & message) {
   std::thread * myThread;
 
-  DiscordChannel * channel = this->guild->channelGet("area1", "system1");
+  std::vector<std::string> messageParts = messageSplit(message, ';');
+  std::string messageChannel = messageParts[0];
+  std::string messageParent = messageParts[1];
+  std::string messageContent = messageParts[2];
+
+  DiscordChannel * channel = this->guild->channelGet(messageChannel, messageParent);
   if (channel == NULL) {
-    channel = this->guild->channelGet("system1", "");
+    channel = this->guild->channelGet(messageParent, "");
     if (channel == NULL) {
       // No system, create system, start threads for area creation and message post
-      this->channelCreate(0, "system1", dpp::CHANNEL_CATEGORY);
-      //init area thread
-      myThread = new std::thread(&DiscordBot::ChildChannelCreateDelayed, this,"area1", "system1");
-      myThread->detach();
+      this->channelCreate(0, messageParent, dpp::CHANNEL_CATEGORY);
     }
+    //init area thread
+    myThread = new std::thread(&DiscordBot::ChildChannelCreateDelayed, this, messageChannel, messageParent);
+    myThread->detach();
   }
 
   //init message thread
-  myThread = new std::thread(&DiscordBot::MessagePostDelayed, this, "area1", "system1", "THIS IS THE TEST MESSAGE");
+  myThread = new std::thread(&DiscordBot::MessagePostDelayed, this, messageChannel, messageParent, messageContent);
   myThread->detach();
 }
 

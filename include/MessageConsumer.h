@@ -29,7 +29,7 @@ class MessageConsumer {
        *
        * @param message the message information
        */
-      virtual void messageCb(std::string * message) = 0;
+      virtual void messageCb(const std::string & message) = 0;
     };
 }  // namespace arta
 

@@ -30,6 +30,7 @@ void Area::rollForNewEffect(void) {
 
     if (effect != NULL) {
         logger->info(name + " - " + effect->startingText);
+        utils->sendMessage(name + ";" + systemName + ";" + name + " - " + effect->startingText);
 
         activeModifiers.insert(effect->type);
         ConsumerModifierEffect effectLocalCopy = *effect;
@@ -46,6 +47,7 @@ void Area::processActiveEffects(void) {
         if (utils->roll(1, 100) < effect.chanceToEnd) {
             activeModifiers.erase(effect.type);
             logger->info(name + " - " + effect.endingText);
+            utils->sendMessage(name + ";" + systemName + ";" + name + " - " + effect.endingText);
             it = activeModifierEffects.erase(it);
             continue;
         }

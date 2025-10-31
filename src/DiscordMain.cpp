@@ -34,16 +34,10 @@ namespace arta {
     }
 
     int DiscordMain(int argc, char** argv) {
-        IO io;
-
         logger.info("Starting Discord Bot\n");
         from_json(loadFile("config.json"), config);
 
-        io.setLogger(&logger);
-        io.fifoInit("/tmp/discord_client.fifo");
-
         bot.loggerSet(&logger);
-
         std::string id = "myid";
         bot.init(config.bot_token, id);
 
@@ -52,6 +46,9 @@ namespace arta {
             usleep(5 * 1000 * 1000);
         }
 
+        IO io;
+        io.setLogger(&logger);
+        io.fifoInit("/tmp/discord_client.fifo");
         io.setConsumer(&bot);
 
         while (1) {

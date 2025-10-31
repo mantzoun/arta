@@ -3,6 +3,12 @@
  *
  * Utils.cpp
  */
+#include <iostream>
+#include <string>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <cstring>
 
 #include "include/Utils.h"
 
@@ -21,5 +27,22 @@ int Utils::roll(int max) {
 
 int Utils::roll(int min, int max) {
     return min + (rand() %(1 + max - min));
+}
+
+int Utils::sendMessage(const std::string & message) {
+    // Open pipe in non-blocking write-only mode
+    int fd = open("/tmp/discord_client.fifo", O_WRONLY | O_NONBLOCK);
+    if (fd == -1) {
+        return -1;
+    }
+
+    ssize_t written = write(fd, message.c_str(), message.size());
+    if (written == -1) {
+        return -2;
+    }
+    write(fd, "\n", message.size());
+
+    close(fd);
+    return 0;
 }
 }  // namespace arta

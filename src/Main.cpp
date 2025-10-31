@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
     while (1) {
         // game_loop();
         // engine.execute_game_loop();
-        usleep(2 * 1000 * 1000);
+        usleep(60 * 1000 * 1000);
         engine.tik();
     }
 }

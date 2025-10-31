@@ -24,6 +24,7 @@ namespace arta {
  */
 class Area : public Entity, public EffectConsumer {
    private:
+    std::string systemName;
     AreaType type;
     pop_t population;
     pop_t populationMax;
@@ -61,6 +62,7 @@ void to_json(nlohmann::json& j, \
   j = nlohmann::json{
         {"id", a.id},
         {"name", a.name},
+        {"systemName", a.systemName},
         {"cons_type", a.cons_type},
         {"activeModifiers", a.activeModifiers},
         {"activeModifierEffects", a.activeModifierEffects},
@@ -76,6 +78,7 @@ void from_json(const nlohmann::json& j,
                 Area & a) {  // NOLINT(runtime/references)
     j.at("id").get_to(a.id);
     j.at("name").get_to(a.name);
+    j.at("systemName").get_to(a.systemName);
     j.at("cons_type").get_to(a.cons_type);
     j.at("activeModifiers").get_to(a.activeModifiers);
     j.at("activeModifierEffects").get_to(a.activeModifierEffects);
