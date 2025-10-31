@@ -1,0 +1,104 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - '*'
+
+permissions:
+  checks: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/mantzoun/luxbracer-runner:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: make -j4 all
+
+          #  code-check:
+          #    runs-on: ubuntu-latest
+          #    container: ghcr.io/mantzoun/luxbracer-runner:latest
+          #
+          #    needs: build
+          #    steps:
+          #      - name: Checkout code
+          #        uses: actions/checkout@v4
+          #
+          #      - name: Lint
+          #        run: make cpplint || echo "TEST_FAILED=true" >> $GITHUB_ENV
+          #
+          #      - name: Static Code Analysis
+          #        run: make cppcheck || echo "TEST_FAILED=true" >> $GITHUB_ENV
+          #
+          #      - name: Serialization check
+          #        run: make serialization_check || echo "TEST_FAILED=true" >> $GITHUB_ENV
+          #
+          #      - name: Fail if checks Failed
+          #        if: env.TEST_FAILED == 'true'
+          #        run: |
+          #          echo "Code check failed"
+          #          exit 1
+          #
+          #  tests-and-coverage:
+          #    runs-on: ubuntu-latest
+          #    container: ghcr.io/mantzoun/luxbracer-runner:latest
+          #
+          #    needs: build
+          #    steps:
+          #      - name: Checkout code
+          #        uses: actions/checkout@v4
+          #
+          #      - name: Unit testing
+          #        run: make -j4 test_ci || echo "TEST_FAILED=true" >> $GITHUB_ENV
+          #
+          #      - name: Code coverage
+          #        run: make coverage
+          #
+          #      # dorny fails otherwise
+          #      - name: Mark repo as safe for git
+          #        run: git config --global --add safe.directory "$(pwd)"
+          #
+          #      - name: Publish test results
+          #        uses: dorny/test-reporter@v1
+          #        with:
+          #          name: Unit Tests
+          #          path: results.xml
+          #          reporter: java-junit
+          #
+          #      - name: Upload coverage results
+          #        uses: actions/upload-artifact@v4
+          #        with:
+          #          name: coverage-results
+          #          path: |
+          #            ./coverage_clean.info
+          #            out/
+          #
+          #      - name: Fail if tests failed
+          #        if: env.TEST_FAILED == 'true'
+          #        run: |
+          #          echo "Unit tests failed!"
+          #          exit 1
+          #
+          #            #  release:
+          #            #    runs-on: release
+          #            #    needs: build
+          #            #    steps:
+          #            #      - uses: actions/checkout@v4
+          #            #
+          #            #      - name: Build release binary
+          #            #        run: |
+          #            #          make release
+          #            #
+          #            #      - name: Upload release binary
+          #            #        uses: actions/upload-artifact@v4
+          #            #        with:
+          #            #          name: luxbot
+          #            #          path: |
+          #            #            ./bin/luxbot
+          #            #
