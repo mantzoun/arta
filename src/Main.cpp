@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
     // std::string id = "myid";
     // bot.init(config.bot_token, id);
 
-    // while (!bot.init_complete) {
+    // while (!bot.initComplete) {
     //     logger.debug("Waiting for bot init");
     //     usleep(5 * 1000 * 1000);
     // }

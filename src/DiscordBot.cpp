@@ -20,30 +20,30 @@ DiscordBot::DiscordBot(void) {
 
 void DiscordBot::ChildChannelCreateDelayed(std::string channel, std::string parent) {
   int retries = 10;
-  DiscordChannel * c = this->guild->channel_get(parent, "");
+  DiscordChannel * c = this->guild->channelGet(parent, "");
 
   while ((retries > 0) && (c == NULL)) {
       retries--;
       usleep(1000 * 1000);
       this->logger->debug("LOOP1");
-      c = this->guild->channel_get(parent, "");
+      c = this->guild->channelGet(parent, "");
   }
 
   if (retries == 0) {
     return;
   }
 
-  this->channel_create(c->id(), channel, dpp::CHANNEL_TEXT);
+  this->channelCreate(c->idGet(), channel, dpp::CHANNEL_TEXT);
 }
 
 void DiscordBot::MessagePostDelayed(std::string channel, std::string parent, std::string message) {
   int retries = 10;
-  DiscordChannel * c = this->guild->channel_get(channel, parent);
+  DiscordChannel * c = this->guild->channelGet(channel, parent);
 
   while (retries > 0 && c == NULL) {
     retries--;
     usleep(1000 * 1000);
-    c = this->guild->channel_get(channel, parent);
+    c = this->guild->channelGet(channel, parent);
     this->logger->debug("LOOP2");
   }
 
@@ -51,76 +51,77 @@ void DiscordBot::MessagePostDelayed(std::string channel, std::string parent, std
     return;
   }
 
-  this->post_message(channel, message);
+  this->postMessage(channel, message);
 }
 // ===================================================================
 //                          INTERFACE
 // ===================================================================
 void DiscordBot::messageCb(std::string * message) {
   logger->info(*message);
+  std::thread * myThread;
 
-  DiscordChannel * channel = this->guild->channel_get("area1", "system1");
+  DiscordChannel * channel = this->guild->channelGet("area1", "system1");
   if (channel == NULL) {
-    channel = this->guild->channel_get("system1", "");
+    channel = this->guild->channelGet("system1", "");
     if (channel == NULL) {
       // No system, create system, start threads for area creation and message post
-      this->channel_create(0, "system1", dpp::CHANNEL_CATEGORY);
-      std::thread * myThread;
+      this->channelCreate(0, "system1", dpp::CHANNEL_CATEGORY);
       //init area thread
       myThread = new std::thread(&DiscordBot::ChildChannelCreateDelayed, this,"area1", "system1");
       myThread->detach();
-      //init message thread
-      myThread = new std::thread(&DiscordBot::MessagePostDelayed, this, "area1", "system1", "THIS IS THE TEST MESSAGE");
-      myThread->detach();
     }
   }
+
+  //init message thread
+  myThread = new std::thread(&DiscordBot::MessagePostDelayed, this, "area1", "system1", "THIS IS THE TEST MESSAGE");
+  myThread->detach();
 }
 
 // ===================================================================
 //                          MESSAGES
 // ===================================================================
-void DiscordBot::post_message(const std::string & channel_name,
+void DiscordBot::postMessage(const std::string & channelName,
                               const std::string & text) {
   dpp::message message;
 
-  std::list<DiscordChannel *> channels = this->guild->channel_get(channel_name);
+  std::list<DiscordChannel *> channels = this->guild->channelGet(channelName);
 
   if (channels.size() == 0) {
-    logger->error("No channels found to post : " + channel_name);
+    logger->error("No channels found to post : " + channelName);
     return;
   }
 
   for (DiscordChannel * channel : channels) {
-    message.channel_id = channel->id();
-    message.guild_id = this->guild_id;
+    message.channel_id = channel->idGet();
+    message.guild_id = this->guildId;
     message.content = text;
-    logger->debug("Post to channel : " + channel->name() + "," + std::to_string(channel->id()) +
-                  "," + std::to_string(channel->parent()));
-    this->discord_iface->message_create(message);
+    logger->debug("Post to channel : " + channel->nameGet() + "," + std::to_string(channel->idGet()) +
+                  "," + std::to_string(channel->parentGet()));
+    this->discordIface->message_create(message);
   }
 }
 
 // ===================================================================
 //                          CHANNELS
 // ===================================================================
-void DiscordBot::channel_create(dpp::snowflake parent_id,
+void DiscordBot::channelCreate(dpp::snowflake parent_id,
                                 const std::string & name,
                                 dpp::channel_type chanType) {
   dpp::channel chan;
 
   chan.name = name;
-  chan.guild_id = this->guild_id;
+  chan.guild_id = this->guildId;
   chan.set_type(chanType);
 
   if (parent_id != 0) {
     chan.parent_id = parent_id;
   }
 
-  this->discord_iface->channel_create(chan);
+  this->discordIface->channel_create(chan);
 }
 
-void DiscordBot::channel_delete(const std::string & name) {
-  std::list<DiscordChannel *> channels = this->guild->channel_get(name);
+void DiscordBot::channelDelete(const std::string & name) {
+  std::list<DiscordChannel *> channels = this->guild->channelGet(name);
 
   if (channels.size() != 1) {
     logger->warn("Number of channels to delete not 1 : " +
@@ -129,12 +130,12 @@ void DiscordBot::channel_delete(const std::string & name) {
   }
 
   DiscordChannel * discord_channel = channels.front();
-  this->discord_iface->channel_delete(discord_channel->id(), NULL);
+  this->discordIface->channel_delete(discord_channel->idGet(), NULL);
 }
 
-void DiscordBot::channel_rename(const std::string & name,
-                                std::string new_name) {
-  std::list<DiscordChannel *> channels = this->guild->channel_get(name);
+void DiscordBot::channelRename(const std::string & name,
+                                std::string newName) {
+  std::list<DiscordChannel *> channels = this->guild->channelGet(name);
 
   if (channels.size() != 1) {
     logger->warn("Number of channels to rename not 1 : " +
@@ -142,16 +143,16 @@ void DiscordBot::channel_rename(const std::string & name,
     return;
   }
 
-  DiscordChannel * discord_channel = channels.front();
+  DiscordChannel * discordChannel = channels.front();
 
   dpp::channel channel;
 
-  channel.id = discord_channel->id();
-  channel.set_name(new_name);
-  this->discord_iface->channel_edit(channel, NULL);
+  channel.id = discordChannel->idGet();
+  channel.set_name(newName);
+  this->discordIface->channel_edit(channel, NULL);
 }
 
-dpp::command_completion_event_t DiscordBot::channels_get_callback(dpp::confirmation_callback_t value) {
+dpp::command_completion_event_t DiscordBot::channelsGetCallback(dpp::confirmation_callback_t value) {
   this->logger->debug("channels Callback");
 
   if ( value.is_error() == true ) {
@@ -177,14 +178,14 @@ dpp::command_completion_event_t DiscordBot::channels_get_callback(dpp::confirmat
     this->logger->debug("" + channel.name + " " +
                              channel.id.str() + " " +
                              channel.parent_id.str());
-    this->guild->channel_add(channel);
+    this->guild->channelAdd(channel);
 
     this->logger->debug("Found channel " + channel.name +
                         " with id " + std::to_string(id));
     }
 
   for (std::string ch_name : default_channels) {
-    std::list<DiscordChannel *> channels = this->guild->channel_get(ch_name);
+    std::list<DiscordChannel *> channels = this->guild->channelGet(ch_name);
 
     if (channels.size() > 0) {
       continue;
@@ -195,20 +196,20 @@ dpp::command_completion_event_t DiscordBot::channels_get_callback(dpp::confirmat
     dpp::channel chan;
 
     chan.name = ch_name;
-    chan.guild_id = this->guild_id;
+    chan.guild_id = this->guildId;
     chan.set_type(dpp::CHANNEL_TEXT);
 
     // std::function<void(const dpp_cb_t&)> callback =
     // std::bind(&DiscordBot::channels_create_cb, this, std::placeholders::_1);
-    this->discord_iface->channel_create(chan);  //, callback);
+    this->discordIface->channel_create(chan);  //, callback);
   }
 
-  this->init_complete = true;
+  this->initComplete = true;
 
   return NULL;
 }
 
-dpp::command_completion_event_t DiscordBot::user_get_guilds_callback(dpp::confirmation_callback_t value) {
+dpp::command_completion_event_t DiscordBot::userGetGuildsCallback(dpp::confirmation_callback_t value) {
   this->logger->debug("Guilds Callback");
   if (value.is_error() == true) {
     dpp::error_info err = value.get_error();
@@ -229,34 +230,34 @@ dpp::command_completion_event_t DiscordBot::user_get_guilds_callback(dpp::confir
     id = it.first;
     g = it.second;
 
-    this->initialize_guild(id);
-    this->guild_id = id;
+    this->initializeGuild(id);
+    this->guildId = id;
 
-    this->slash_commands_init();
+    this->slashCommandsInit();
 
     std::function<void(const dpp::confirmation_callback_t&)> callback =
-    std::bind(&DiscordBot::channels_get_callback, this, std::placeholders::_1);
+    std::bind(&DiscordBot::channelsGetCallback, this, std::placeholders::_1);
 
-    this->discord_iface->channels_get(id, callback);
+    this->discordIface->channels_get(id, callback);
   }
 
   return NULL;
 }
 
-void DiscordBot::initialize_guild(dpp::snowflake id) {
+void DiscordBot::initializeGuild(dpp::snowflake id) {
   this->guild = new DiscordGuild(id);
-  this->guild->set_logger(logger);
+  this->guild->loggerSet(logger);
 }
 
 void DiscordBot::init(std::string token, const std::string & id) {
-  this->discord_iface = new dpp::cluster(token);
+  this->discordIface = new dpp::cluster(token);
 
   // luxbracer_discord_bot = this;
 
-  this->bot_id = id;
+  this->botId = id;
 
   // Use our own logger for output consistency
-  this->discord_iface->on_log([this](const dpp::log_t & event) {
+  this->discordIface->on_log([this](const dpp::log_t & event) {
   switch (event.severity) {
     case dpp::ll_trace:
     case dpp::ll_debug:
@@ -276,38 +277,38 @@ void DiscordBot::init(std::string token, const std::string & id) {
     }
   });
 
-  this->discord_iface->on_channel_create(
+  this->discordIface->on_channel_create(
           [this](const dpp::channel_create_t & channel) {
-    this->guild->channel_add(channel);
+    this->guild->channelAdd(channel);
   });
 
-  this->discord_iface->on_channel_delete(
+  this->discordIface->on_channel_delete(
           [this](const dpp::channel_delete_t & channel) {
-    this->guild->channel_delete(channel);
+    this->guild->channelDelete(channel);
   });
 
-  this->discord_iface->on_channel_update(
+  this->discordIface->on_channel_update(
           [this](const dpp::channel_update_t & channel) {
-    this->guild->channel_update(channel);
+    this->guild->channelUpdate(channel);
   });
 
-  this->discord_iface->on_slashcommand(
+  this->discordIface->on_slashcommand(
           [this](const dpp::slashcommand_t & event) {
-    this->slash_commands_handle(event);
+    this->slashCommandsHandle(event);
   });
 
-  this->discord_iface->on_ready([this](const dpp::ready_t& event) {
+  this->discordIface->on_ready([this](const dpp::ready_t& event) {
     std::function<void(const dpp::confirmation_callback_t&)> callback =
-    std::bind(&DiscordBot::user_get_guilds_callback,
+    std::bind(&DiscordBot::userGetGuildsCallback,
               this, std::placeholders::_1);
 
-    this->discord_iface->current_user_get_guilds(callback);
+    this->discordIface->current_user_get_guilds(callback);
   });
 
-  this->discord_iface->start(dpp::st_return);
+  this->discordIface->start(dpp::st_return);
 }
 
-void DiscordBot::set_logger(Logger * l) {
+void DiscordBot::loggerSet(Logger * l) {
   this->logger = l;
 }
 }  // namespace arta

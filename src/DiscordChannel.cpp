@@ -7,28 +7,28 @@ namespace arta {
 DiscordChannel::DiscordChannel(dpp::snowflake id,
                                dpp::snowflake parent,
                                const std::string & name) :
-                                    _id(id),
-                                    _parent(parent),
-                                    _name(name) {
+                                    id(id),
+                                    parent(parent),
+                                    name(name) {
 }
 
-dpp::snowflake DiscordChannel::id(void) const {
-  return _id;
+dpp::snowflake DiscordChannel::idGet(void) const {
+  return id;
 }
 
-dpp::snowflake DiscordChannel::parent(void) const {
-  return _parent;
+dpp::snowflake DiscordChannel::parentGet(void) const {
+  return parent;
 }
 
-std::string DiscordChannel::name(void) const {
-  return _name;
+std::string DiscordChannel::nameGet(void) const {
+  return name;
 }
 
-void DiscordChannel::set_parent(dpp::snowflake parent) {
-  _parent = parent;
+void DiscordChannel::parentSet(dpp::snowflake parent) {
+  this->parent = parent;
 }
 
-void DiscordChannel::set_name(const std::string& name) {
-  _name = name;
+void DiscordChannel::nameSet(const std::string& name) {
+  this->name = name;
 }
 }  // namespace arta

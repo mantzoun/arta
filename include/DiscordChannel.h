@@ -11,25 +11,25 @@
 namespace arta {
 class DiscordChannel {
  private:
-  dpp::snowflake  _id;
-  dpp::snowflake  _parent;
-  std::string _name;
+  dpp::snowflake id;
+  dpp::snowflake parent;
+  std::string    name;
  public:
   DiscordChannel(dpp::snowflake id,
                  dpp::snowflake parent,
                  const std::string & name);
 
-  dpp::snowflake  id(void) const;
-  dpp::snowflake  parent(void) const;
-  std::string     name(void) const;
+  dpp::snowflake  idGet(void) const;
+  dpp::snowflake  parentGet(void) const;
+  std::string     nameGet(void) const;
 
-  void set_parent(dpp::snowflake parent);
-  void set_name(const std::string& name);
+  void parentSet(dpp::snowflake parent);
+  void nameSet(const std::string& name);
 
   bool operator==(const DiscordChannel& other) const {
-    return (_id == other.id() &&
-              _parent == other.parent() &&
-              _name == other.name());
+    return (id == other.idGet() &&
+              parent == other.parentGet() &&
+              name == other.nameGet());
   }
 };
 }  // namespace arta

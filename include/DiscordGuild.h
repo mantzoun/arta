@@ -14,33 +14,33 @@
 namespace arta {
 class DiscordGuild {
  private:
-  dpp::snowflake  _id;
+  dpp::snowflake id;
   std::list<DiscordChannel> channels;
   Logger * logger = NULL;
 
-  int verify_and_add_channel(const DiscordChannel& channel);
-  int verify_and_delete_channel(const DiscordChannel& channel);
-  int verify_and_update_channel(const DiscordChannel& channel);
+  int verifyAndAddChannel(const DiscordChannel& channel);
+  int verifyAndDeleteChannel(const DiscordChannel& channel);
+  int verifyAndUpdateChannel(const DiscordChannel& channel);
 
  public:
   explicit DiscordGuild(const dpp::snowflake id);
 
-  dpp::snowflake id(void) const;
+  dpp::snowflake idGet(void) const;
 
-  void set_logger(Logger * logger);
+  void loggerSet(Logger * logger);
 
-  int channel_add(const dpp::channel_create_t & channel);
-  int channel_add(const dpp::channel & channel);
-  int channel_delete(const dpp::channel_delete_t & channel);
-  int channel_update(const dpp::channel_update_t & channel);
+  int channelAdd(const dpp::channel_create_t & channel);
+  int channelAdd(const dpp::channel & channel);
+  int channelDelete(const dpp::channel_delete_t & channel);
+  int channelUpdate(const dpp::channel_update_t & channel);
 
-  std::list<DiscordChannel *> channel_get(const std::string & name,
-                                            dpp::snowflake channel_id = 0,
-                                            dpp::snowflake parent_id = 0);
-  DiscordChannel * channel_get(const std::string & name,
+  std::list<DiscordChannel *> channelGet(const std::string & name,
+                                            dpp::snowflake channelId = 0,
+                                            dpp::snowflake parentId = 0);
+  DiscordChannel * channelGet(const std::string & name,
                                const std::string & parent);
-  std::list<DiscordChannel> channel_get_all(void) const;
-  DiscordChannel * channel_get_by_id(dpp::snowflake id);
+  std::list<DiscordChannel> channelGetAll(void) const;
+  DiscordChannel * channelGetById(dpp::snowflake id);
 };
 }  // namespace arta
 

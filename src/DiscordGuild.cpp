@@ -5,113 +5,113 @@
 
 namespace arta {
 DiscordGuild::DiscordGuild(const dpp::snowflake id)
-    : _id(id) {
+    : id(id) {
 }
 
-void DiscordGuild::set_logger(Logger * logger) {
+void DiscordGuild::loggerSet(Logger * logger) {
   this->logger = logger;
 }
 
-dpp::snowflake  DiscordGuild::id(void) const {
-  return _id;
+dpp::snowflake  DiscordGuild::idGet(void) const {
+  return id;
 }
 
-int DiscordGuild::verify_and_add_channel(const DiscordChannel& channel) {
+int DiscordGuild::verifyAndAddChannel(const DiscordChannel& channel) {
   if (std::any_of(channels.begin(), channels.end(), [&](const auto& item) {
     return item == channel;
   })) {
     // channel exists
-    logger->warn("Channel already exists : " + channel.name() +
-                 "," + std::to_string(channel.id()) +
-                 "," + std::to_string(channel.parent()));
+    logger->warn("Channel already exists : " + channel.nameGet() +
+                 "," + std::to_string(channel.idGet()) +
+                 "," + std::to_string(channel.parentGet()));
     return -1;
   }
 
   channels.push_back(channel);
-  logger->debug("Added channel : " + channel.name() +
-                "," + std::to_string(channel.id()) +
-                "," + std::to_string(channel.parent()));
+  logger->debug("Added channel : " + channel.nameGet() +
+                "," + std::to_string(channel.idGet()) +
+                "," + std::to_string(channel.parentGet()));
   return 0;
 }
 
-int DiscordGuild::verify_and_delete_channel(const DiscordChannel& channel) {
+int DiscordGuild::verifyAndDeleteChannel(const DiscordChannel& channel) {
   for (auto it = channels.begin(); it != channels.end(); ) {
     if (*it == channel) {
       channels.erase(it);
-      logger->debug("Deleted channel : " + channel.name() +
-                    "," + std::to_string(channel.id()) +
-                    "," + std::to_string(channel.parent()));
+      logger->debug("Deleted channel : " + channel.nameGet() +
+                    "," + std::to_string(channel.idGet()) +
+                    "," + std::to_string(channel.parentGet()));
       return 0;
     }
     it++;
   }
 
-  logger->warn("Could not delete channel : " + channel.name() +
-               "," + std::to_string(channel.id()) +
-               "," + std::to_string(channel.parent()));
+  logger->warn("Could not delete channel : " + channel.nameGet() +
+               "," + std::to_string(channel.idGet()) +
+               "," + std::to_string(channel.parentGet()));
   return -1;
 }
 
-int DiscordGuild::verify_and_update_channel(const DiscordChannel& channel) {
+int DiscordGuild::verifyAndUpdateChannel(const DiscordChannel& channel) {
   for (auto it = channels.begin(); it != channels.end(); ) {
-    if (it->id() == channel.id()) {
-      it->set_name(channel.name());
-      it->set_parent(channel.parent());
-      logger->debug("Updated channel : " + channel.name() +
-                    "," + std::to_string(channel.id()) +
-                    "," + std::to_string(channel.parent()));
+    if (it->idGet() == channel.idGet()) {
+      it->nameSet(channel.nameGet());
+      it->parentSet(channel.parentGet());
+      logger->debug("Updated channel : " + channel.nameGet() +
+                    "," + std::to_string(channel.idGet()) +
+                    "," + std::to_string(channel.parentGet()));
       return 0;
     }
     it++;
   }
 
-  logger->warn("Could not update channel : " + channel.name() +
-               "," + std::to_string(channel.id()) +
-               "," + std::to_string(channel.parent()));
+  logger->warn("Could not update channel : " + channel.nameGet() +
+               "," + std::to_string(channel.idGet()) +
+               "," + std::to_string(channel.parentGet()));
   return -1;
 }
 
-int DiscordGuild::channel_add(const dpp::channel & channel) {
-  return verify_and_add_channel(DiscordChannel(channel.id,
+int DiscordGuild::channelAdd(const dpp::channel & channel) {
+  return verifyAndAddChannel(DiscordChannel(channel.id,
                                     channel.parent_id, channel.name));
 }
 
-int DiscordGuild::channel_add(const dpp::channel_create_t & channel) {
-  return verify_and_add_channel(DiscordChannel(channel.created.id,
+int DiscordGuild::channelAdd(const dpp::channel_create_t & channel) {
+  return verifyAndAddChannel(DiscordChannel(channel.created.id,
                                                  channel.created.parent_id,
                                                  channel.created.name));
 }
 
-int DiscordGuild::channel_update(const dpp::channel_update_t & channel) {
-  return verify_and_update_channel(DiscordChannel(channel.updated.id,
+int DiscordGuild::channelUpdate(const dpp::channel_update_t & channel) {
+  return verifyAndUpdateChannel(DiscordChannel(channel.updated.id,
                                                     channel.updated.parent_id,
                                                     channel.updated.name));
 }
 
-int DiscordGuild::channel_delete(const dpp::channel_delete_t & channel) {
-  return verify_and_delete_channel(DiscordChannel(channel.deleted.id,
+int DiscordGuild::channelDelete(const dpp::channel_delete_t & channel) {
+  return verifyAndDeleteChannel(DiscordChannel(channel.deleted.id,
                                                     channel.deleted.parent_id,
                                                     channel.deleted.name));
 }
 
-DiscordChannel * DiscordGuild::channel_get(const std::string & name,
+DiscordChannel * DiscordGuild::channelGet(const std::string & name,
                                            const std::string & parent) {
   DiscordChannel * result = NULL;
-  dpp::snowflake parent_id = 0;
+  dpp::snowflake parentId = 0;
 
   if (parent != "") {
-    DiscordChannel * parent_channel = this->channel_get(parent, "");
-    if (parent_channel == NULL) {
+    DiscordChannel * parentChannel = this->channelGet(parent, "");
+    if (parentChannel == NULL) {
       logger->error("Could not find parent channel");
       return NULL;
     }
 
-    parent_id = parent_channel->id();
+    parentId = parentChannel->idGet();
   }
 
   for (DiscordChannel& channel : channels) {
-    if (channel.name() == name &&
-      (parent_id == 0 || channel.parent() == parent_id)) {
+    if (channel.nameGet() == name &&
+      (parentId == 0 || channel.parentGet() == parentId)) {
       if (result == NULL) {
         result = &channel;
       } else {
@@ -123,18 +123,18 @@ DiscordChannel * DiscordGuild::channel_get(const std::string & name,
   return result;
 }
 
-std::list<DiscordChannel *> DiscordGuild::channel_get(const std::string& name,
-                                                    dpp::snowflake channel_id,
-                                                    dpp::snowflake parent_id) {
+std::list<DiscordChannel *> DiscordGuild::channelGet(const std::string& name,
+                                                    dpp::snowflake channelId,
+                                                    dpp::snowflake parentId) {
   std::list<DiscordChannel *> result;
 
   for (DiscordChannel& channel : channels) {
-    if (channel.name() == name &&
-                (parent_id == 0 || channel.parent() == parent_id) &&
-                (channel_id == 0 || channel.id() == channel_id)) {
-      logger->debug("Add search result channel : " + channel.name() +
-                    "," + std::to_string(channel.id()) +
-                    "," + std::to_string(channel.parent()));
+    if (channel.nameGet() == name &&
+                (parentId == 0 || channel.parentGet() == parentId) &&
+                (channelId == 0 || channel.idGet() == channelId)) {
+      logger->debug("Add search result channel : " + channel.nameGet() +
+                    "," + std::to_string(channel.idGet()) +
+                    "," + std::to_string(channel.parentGet()));
       result.push_back(&channel);
     }
   }
@@ -142,13 +142,13 @@ std::list<DiscordChannel *> DiscordGuild::channel_get(const std::string& name,
   return result;
 }
 
-DiscordChannel * DiscordGuild::channel_get_by_id(dpp::snowflake id) {
+DiscordChannel * DiscordGuild::channelGetById(dpp::snowflake id) {
   if (id == 0) {
     return NULL;
   }
 
   auto it = std::find_if(channels.begin(), channels.end(),
-  [&](const auto& channel) { return id == channel.id(); });
+  [&](const auto& channel) { return id == channel.idGet(); });
 
   if (it != channels.end()) {
     return &(*it);

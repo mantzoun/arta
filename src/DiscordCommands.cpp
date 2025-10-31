@@ -3,13 +3,13 @@
  */
 #include "include/DiscordBot.h"
 
-static std::vector<std::string> delete_commands = {
+static std::vector<std::string> deleteCommands = {
     "location_create", "location_delete"
 };
 
-static std::vector<std::string> existing_commands = {};
+static std::vector<std::string> existingCommands = {};
 
-static std::vector<std::vector<std::string>> guild_commands = {
+static std::vector<std::vector<std::string>> guildCommands = {
     {"channel_create", "Create a new channel",
         "string", "name", "the channel name", "true",
         "string", "parent", "the channel parent", "false",
@@ -40,11 +40,11 @@ static std::vector<std::vector<std::string>> guild_commands = {
 };
 
 namespace arta {
-dpp::command_completion_event_t DiscordBot::update_guild_commands(dpp::confirmation_callback_t value) {
-  this->discord_iface->log(dpp::ll_debug, "Guild Command cleanup Callback");
+dpp::command_completion_event_t DiscordBot::updateGuildCommands(dpp::confirmation_callback_t value) {
+  this->discordIface->log(dpp::ll_debug, "Guild Command cleanup Callback");
   if ( value.is_error() == true ) {
     dpp::error_info err = value.get_error();
-    this->discord_iface->log(dpp::ll_error, "Error " + err.message);
+    this->discordIface->log(dpp::ll_error, "Error " + err.message);
   }
 
   dpp::slashcommand_map map = std::get<dpp::slashcommand_map>(value.value);
@@ -53,43 +53,43 @@ dpp::command_completion_event_t DiscordBot::update_guild_commands(dpp::confirmat
     dpp::snowflake id = it.first;
     dpp::slashcommand command = it.second;
 
-    existing_commands.push_back(command.name);
+    existingCommands.push_back(command.name);
 
-    bool found = std::find(delete_commands.begin(),
-                           delete_commands.end(),
-                           command.name) != delete_commands.end();
+    bool found = std::find(deleteCommands.begin(),
+                           deleteCommands.end(),
+                           command.name) != deleteCommands.end();
 
     if (!found) {
       logger->debug("Skipping delete command " + command.name);
       continue;
     }
 
-    this->discord_iface->log(dpp::ll_debug, "Delete " + command.name);
+    this->discordIface->log(dpp::ll_debug, "Delete " + command.name);
 
-    this->discord_iface->guild_command_delete(id, this->guild_id);
+    this->discordIface->guild_command_delete(id, this->guildId);
   }
 
-  for (const auto& command : guild_commands) {
-    bool found = std::find(existing_commands.begin(),
-                           existing_commands.end(),
-                           command[0]) != existing_commands.end();
+  for (const auto& command : guildCommands) {
+    bool found = std::find(existingCommands.begin(),
+                           existingCommands.end(),
+                           command[0]) != existingCommands.end();
 
     if (found) {
       logger->debug("Skipping create command " + command[0]);
       continue;
     }
 
-    register_guild_command(command);
+    registerGuildCommand(command);
   }
 
   return NULL;
 }
 
-dpp::command_completion_event_t DiscordBot::delete_global_commands(dpp::confirmation_callback_t value) {
-  this->discord_iface->log(dpp::ll_debug, "Global Command cleanup Callback");
+dpp::command_completion_event_t DiscordBot::deleteGlobalCommands(dpp::confirmation_callback_t value) {
+  this->discordIface->log(dpp::ll_debug, "Global Command cleanup Callback");
   if (value.is_error() == true) {
     dpp::error_info err = value.get_error();
-    this->discord_iface->log(dpp::ll_error, "Error " + err.message);
+    this->discordIface->log(dpp::ll_error, "Error " + err.message);
   }
 
   dpp::slashcommand_map map = std::get<dpp::slashcommand_map>(value.value);
@@ -98,26 +98,26 @@ dpp::command_completion_event_t DiscordBot::delete_global_commands(dpp::confirma
     dpp::snowflake id = it.first;
     dpp::slashcommand command = it.second;
 
-    bool found = std::find(delete_commands.begin(),
-                           delete_commands.end(),
-                           command.name) != delete_commands.end();
+    bool found = std::find(deleteCommands.begin(),
+                           deleteCommands.end(),
+                           command.name) != deleteCommands.end();
 
     if (!found) {
       logger->debug("Skipping command " + command.name);
       continue;
     }
 
-    this->discord_iface->log(dpp::ll_debug, "Delete " + command.name);
-    this->discord_iface->global_command_delete(id, NULL);
+    this->discordIface->log(dpp::ll_debug, "Delete " + command.name);
+    this->discordIface->global_command_delete(id, NULL);
   }
 
   return NULL;
 }
 
-void DiscordBot::register_guild_command(std::vector<std::string> command) {
+void DiscordBot::registerGuildCommand(std::vector<std::string> command) {
   dpp::slashcommand cmd = dpp::slashcommand(command[0],
                                             command[1],
-                                            this->discord_iface->me.id);
+                                            this->discordIface->me.id);
   dpp::command_option option;
 
   size_t i = 2;
@@ -143,7 +143,7 @@ void DiscordBot::register_guild_command(std::vector<std::string> command) {
         i += 3;
       }
     } else {
-      this->discord_iface->log(dpp::ll_error,
+      this->discordIface->log(dpp::ll_error,
                                 "Error type " + command[i] +
                                 " in command " + command[0]);
       break;
@@ -152,119 +152,119 @@ void DiscordBot::register_guild_command(std::vector<std::string> command) {
     cmd.add_option(option);
   }
 
-  this->discord_iface->log(dpp::ll_debug, "Register " + cmd.name);
-  this->discord_iface->guild_command_create(cmd, this->guild_id);
+  this->discordIface->log(dpp::ll_debug, "Register " + cmd.name);
+  this->discordIface->guild_command_create(cmd, this->guildId);
 }
 
-void DiscordBot::slash_commands_init() {
-  this->discord_iface->log(dpp::ll_debug, "Register slash commands");
+void DiscordBot::slashCommandsInit() {
+  this->discordIface->log(dpp::ll_debug, "Register slash commands");
 
   std::function<void(const dpp::confirmation_callback_t&)> callback =
-  std::bind(&DiscordBot::update_guild_commands, this, std::placeholders::_1);
-  this->discord_iface->guild_commands_get(guild_id, callback);
+  std::bind(&DiscordBot::updateGuildCommands, this, std::placeholders::_1);
+  this->discordIface->guild_commands_get(guildId, callback);
 
-  callback = std::bind(&DiscordBot::delete_global_commands,
+  callback = std::bind(&DiscordBot::deleteGlobalCommands,
                             this, std::placeholders::_1);
-  this->discord_iface->global_commands_get(callback);
+  this->discordIface->global_commands_get(callback);
 }
 
-void DiscordBot::slash_commands_handle(const dpp::slashcommand_t & event) {
+void DiscordBot::slashCommandsHandle(const dpp::slashcommand_t & event) {
   /* Check which command they ran */
-  this->discord_iface->log(dpp::ll_warning,
+  this->discordIface->log(dpp::ll_warning,
                             "COMMAND: " + event.command.get_command_name());
   if (event.command.get_command_name() == "channel_create") {
     event.reply("command received");
 
-    this->slash_commands_handle_channel_create(event);
+    this->slashCommandsHandleChannelCreate(event);
   } else if (event.command.get_command_name() == "channel_delete") {
     event.reply("command received");
 
-    this->slash_commands_handle_channel_delete(event);
+    this->slashCommandsHandleChannelDelete(event);
   } else if (event.command.get_command_name() == "channel_rename") {
     event.reply("command received");
 
-    this->slash_commands_handle_channel_rename(event);
+    this->slashCommandsHandleChannelRename(event);
   } else if (event.command.get_command_name() == "system_create") {
     event.reply("command received");
 
-    this->slash_commands_handle_system_create(event);
+    this->slashCommandsHandleSystemCreate(event);
   } else if (event.command.get_command_name() == "system_delete") {
     event.reply("command received");
 
-    this->slash_commands_handle_system_delete(event);
+    this->slashCommandsHandleSystemDelete(event);
   } else if (event.command.get_command_name() == "planet_create") {
     event.reply("command received");
 
-    this->slash_commands_handle_planet_create(event);
+    this->slashCommandsHandlePlanetCreate(event);
   } else if (event.command.get_command_name() == "planet_delete") {
     event.reply("command received");
 
-    this->slash_commands_handle_planet_delete(event);
+    this->slashCommandsHandlePlanetDelete(event);
   }
 }
 
-void DiscordBot::system_create(const std::string& name) {
+void DiscordBot::systemCreate(const std::string& name) {
 }
 
-void DiscordBot::planet_create(const std::string& name,
+void DiscordBot::planetCreate(const std::string& name,
                                const std::string& system) {
 }
 
-void DiscordBot::system_delete(const std::string& name) {
+void DiscordBot::systemDelete(const std::string& name) {
   this->logger->debug("System delete");
 }
 
-void DiscordBot::planet_delete(const std::string& name) {
+void DiscordBot::planetDelete(const std::string& name) {
   this->logger->debug("Planet delete");
 }
 
-void DiscordBot::slash_commands_handle_system_create(
+void DiscordBot::slashCommandsHandleSystemCreate(
                         const dpp::slashcommand_t & event) {
   std::string name = std::get<std::string>(event.get_parameter("name"));
 
-  this->system_create(name);
+  this->systemCreate(name);
 }
 
-void DiscordBot::slash_commands_handle_system_delete(
+void DiscordBot::slashCommandsHandleSystemDelete(
                         const dpp::slashcommand_t & event) {
   std::string name = std::get<std::string>(event.get_parameter("name"));
 
-  this->system_delete(name);
+  this->systemDelete(name);
 }
 
-void DiscordBot::slash_commands_handle_planet_create(
+void DiscordBot::slashCommandsHandlePlanetCreate(
                         const dpp::slashcommand_t & event) {
   std::string name = std::get<std::string>(event.get_parameter("name"));
   std::string system = std::get<std::string>(event.get_parameter("system"));
 
-  this->planet_create(name, system);
+  this->planetCreate(name, system);
 }
 
-void DiscordBot::slash_commands_handle_planet_delete(
+void DiscordBot::slashCommandsHandlePlanetDelete(
                         const dpp::slashcommand_t & event) {
   std::string name = std::get<std::string>(event.get_parameter("name"));
 
-  this->planet_delete(name);
+  this->planetDelete(name);
 }
 
-void DiscordBot::slash_commands_handle_channel_delete(
+void DiscordBot::slashCommandsHandleChannelDelete(
                         const dpp::slashcommand_t & event) {
   std::string name = std::get<std::string>(event.get_parameter("name"));
 
-  this->channel_delete(name);
+  this->channelDelete(name);
   // FIXME parents staff in channel hierarchy
 }
 
-void DiscordBot::slash_commands_handle_channel_rename(
+void DiscordBot::slashCommandsHandleChannelRename(
                         const dpp::slashcommand_t & event) {
   std::string name = std::get<std::string>(event.get_parameter("name"));
   std::string new_name = std::get<std::string>(event.get_parameter("new_name"));
 
-  this->channel_rename(name, new_name);
+  this->channelRename(name, new_name);
   // FIXME parents staff in channel hierarchy
 }
 
-void DiscordBot::slash_commands_handle_channel_create(
+void DiscordBot::slashCommandsHandleChannelCreate(
                         const dpp::slashcommand_t & event) {
   std::string name = std::get<std::string>(event.get_parameter("name"));
 
@@ -280,12 +280,12 @@ void DiscordBot::slash_commands_handle_channel_create(
   } catch (const std::bad_variant_access& e) {
   }
 
-  uint64_t parent_id = 0;
+  uint64_t parentId = 0;
 
   this->logger->info(name + " # " + type + " # " + parent);
 
   if (parent != "") {
-    std::list<DiscordChannel *> parents = this->guild->channel_get(parent);
+    std::list<DiscordChannel *> parents = this->guild->channelGet(parent);
 
     if (parents.size() == 0) {
       this->logger->warn("channel parent not found " + parent);
@@ -297,7 +297,7 @@ void DiscordBot::slash_commands_handle_channel_create(
       return;
     }
 
-    parent_id = parents.front()->id();
+    parentId = parents.front()->idGet();
   }
 
   dpp::channel_type chanType = dpp::CHANNEL_TEXT;
@@ -306,6 +306,6 @@ void DiscordBot::slash_commands_handle_channel_create(
     chanType = dpp::CHANNEL_CATEGORY;
   }
 
-  this->channel_create(parent_id, name, chanType);
+  this->channelCreate(parentId, name, chanType);
 }
 }  // namespace artaS
