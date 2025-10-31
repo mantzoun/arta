@@ -49,7 +49,7 @@ class DiscordBot : public MessageConsumer {
 
   bool initComplete = false;
 
-  void messageCb(const std::string & message) override;
+  void messageCb(std::string message) override;
 
   /**
    * @brief Initiaze the bot

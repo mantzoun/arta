@@ -1,7 +1,11 @@
 /*
  * Copyright 2025 Stavros Mantzouneas
  */
+#include <mutex>
+
 #include "include/DiscordGuild.h"
+
+static std::mutex mutex;
 
 namespace arta {
 DiscordGuild::DiscordGuild(const dpp::snowflake id)
@@ -72,23 +76,27 @@ int DiscordGuild::verifyAndUpdateChannel(const DiscordChannel& channel) {
 }
 
 int DiscordGuild::channelAdd(const dpp::channel & channel) {
+  std::scoped_lock lock(mutex);
   return verifyAndAddChannel(DiscordChannel(channel.id,
                                     channel.parent_id, channel.name));
 }
 
 int DiscordGuild::channelAdd(const dpp::channel_create_t & channel) {
+  std::scoped_lock lock(mutex);
   return verifyAndAddChannel(DiscordChannel(channel.created.id,
                                                  channel.created.parent_id,
                                                  channel.created.name));
 }
 
 int DiscordGuild::channelUpdate(const dpp::channel_update_t & channel) {
+  std::scoped_lock lock(mutex);
   return verifyAndUpdateChannel(DiscordChannel(channel.updated.id,
                                                     channel.updated.parent_id,
                                                     channel.updated.name));
 }
 
 int DiscordGuild::channelDelete(const dpp::channel_delete_t & channel) {
+  std::scoped_lock lock(mutex);
   return verifyAndDeleteChannel(DiscordChannel(channel.deleted.id,
                                                     channel.deleted.parent_id,
                                                     channel.deleted.name));

@@ -73,8 +73,8 @@ int main(int argc, char **argv) {
     while (1) {
         // game_loop();
         // engine.execute_game_loop();
-        usleep(60 * 1000 * 1000);
         engine.tik();
+        usleep(60 * 1000 * 1000);
     }
 }
 }  // namespace arta

@@ -61,22 +61,22 @@ void DiscordBot::MessagePostDelayed(std::string channel, std::string parent, std
 // ===================================================================
 //                          INTERFACE
 // ===================================================================
-std::vector<std::string> messageSplit(const std::string& input, char delimiter) {
-    std::vector<std::string> tokens;
-    std::stringstream ss(input);
-    std::string item;
-
-    while (std::getline(ss, item, delimiter)) {
-        tokens.push_back(item);
-    }
-
-    return tokens;
-}
-
-void DiscordBot::messageCb(const std::string & message) {
+void DiscordBot::messageCb(std::string message) {
   std::thread * myThread;
 
-  std::vector<std::string> messageParts = messageSplit(message, ';');
+  std::vector<std::string> messageParts;
+  std::stringstream ss(message);
+  std::string item;
+
+  while (std::getline(ss, item, ';')) {
+    messageParts.push_back(item);
+  }
+
+  if (messageParts.size() != 3) {
+    logger->error("message errpr: " + message);
+    return;
+  }
+
   std::string messageChannel = messageParts[0];
   std::string messageParent = messageParts[1];
   std::string messageContent = messageParts[2];
@@ -116,8 +116,8 @@ void DiscordBot::postMessage(const std::string & channelName,
     message.channel_id = channel->idGet();
     message.guild_id = this->guildId;
     message.content = text;
-    logger->debug("Post to channel : " + channel->nameGet() + "," + std::to_string(channel->idGet()) +
-                  "," + std::to_string(channel->parentGet()));
+    // logger->debug("Post to channel : " + channel->nameGet() + "," + std::to_string(channel->idGet()) +
+    //               "," + std::to_string(channel->parentGet()));
     this->discordIface->message_create(message);
   }
 }

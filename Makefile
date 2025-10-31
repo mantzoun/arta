@@ -14,9 +14,9 @@ DOX = doxygen
 DOXYFILE = Doxyfile
 
 CC = g++
-CFLAGS =  -Wall -g -std=c++20 -Wno-psabi -O0 -fprofile-arcs -ftest-coverage -ffunction-sections -fdata-sections
+CFLAGS =  -Wall -g -std=c++20 -Wno-psabi -O0 -fprofile-arcs -ftest-coverage -ffunction-sections -fdata-sections -fsanitize=address -fno-omit-frame-pointer
 RELEASE_CFLAGS = -Wall -std=c++20 -Wno-psabi -O3 -ffunction-sections -fdata-sections
-LDFLAGS = -Wl,--gc-sections
+LDFLAGS = -Wl,--gc-sections -fsanitize=address
 INCLUDES = -I.
 
 LIB = -ldpp \

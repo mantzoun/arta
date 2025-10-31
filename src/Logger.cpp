@@ -6,12 +6,12 @@
  * implementation of Logger class methods
  */
 
-#include "include/Logger.h"
-
 #include <cstdio>
 #include <ctime>
 #include <iostream>
 #include <mutex>
+
+#include "include/Logger.h"
 
 static std::mutex mutex;
 

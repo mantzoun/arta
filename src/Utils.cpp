@@ -29,7 +29,7 @@ int Utils::roll(int min, int max) {
     return min + (rand() %(1 + max - min));
 }
 
-int Utils::sendMessage(const std::string & message) {
+int Utils::sendMessage(std::string message) {
     // Open pipe in non-blocking write-only mode
     int fd = open("/tmp/discord_client.fifo", O_WRONLY | O_NONBLOCK);
     if (fd == -1) {
@@ -40,7 +40,7 @@ int Utils::sendMessage(const std::string & message) {
     if (written == -1) {
         return -2;
     }
-    write(fd, "\n", message.size());
+    write(fd, "\n", 1);
 
     close(fd);
     return 0;

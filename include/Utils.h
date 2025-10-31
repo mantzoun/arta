@@ -59,7 +59,7 @@ class Utils {
     int roll(int bound);
     int roll(int lower_bound, int upper_bound);
 
-    int sendMessage(const std::string & message);
+    int sendMessage(std::string message);
 };
 }  // namespace arta
 
