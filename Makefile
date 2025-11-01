@@ -14,16 +14,19 @@ DOX = doxygen
 DOXYFILE = Doxyfile
 
 CC = g++
-CFLAGS =  -Wall -g -std=c++20 -Wno-psabi -O0 -fprofile-arcs -ftest-coverage -ffunction-sections -fdata-sections -fsanitize=address -fno-omit-frame-pointer
+CFLAGS =  -Wall -g -std=c++20 -Wno-psabi -O0 -fprofile-arcs -ftest-coverage -ffunction-sections -fdata-sections
 RELEASE_CFLAGS = -Wall -std=c++20 -Wno-psabi -O3 -ffunction-sections -fdata-sections
-LDFLAGS = -Wl,--gc-sections -fsanitize=address
-INCLUDES = -I.
+LDFLAGS = -Wl,--gc-sections
+INCLUDES = -I. -I/usr/include/jsoncpp
 
 LIB = -ldpp \
       -lgcov \
+      -lcivetweb \
+      -ljsoncpp \
 
 FILES = Main.cpp TimeManager.cpp Entity.cpp Universe.cpp Engine.cpp System.cpp Area.cpp Modifier.cpp
 DISCORD_FILES = DiscordMain.cpp DiscordBot.cpp DiscordChannel.cpp DiscordGuild.cpp DiscordCommands.cpp
+WEBUI_FILES = WebUI.cpp
 COMMON_FILES = Logger.cpp IO.cpp Utils.cpp
 
 TEST_FILES = test_main.cpp
@@ -39,17 +42,23 @@ DISCORD_SRC = $(addprefix $(SRCDIR)/,$(DISCORD_FILES))
 DISCORD_OBJ = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o, $(DISCORD_SRC))
 DISCORD_BIN = $(BINDIR)/discord
 
+WEBUI_SRC = $(addprefix $(SRCDIR)/,$(WEBUI_FILES))
+WEBUI_OBJ = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o, $(WEBUI_SRC))
+WEBUI_BIN = $(BINDIR)/webui
+
 TST = $(addprefix $(TSTDIR)/,$(TEST_FILES))
 TSTOBJ = $(patsubst $(TSTDIR)/%.cpp,$(OBJDIR)/%.o, $(TST))
 TSTBIN = $(BINDIR)/test
 
-.PHONY: all release clean dox test test_ci arta discord
+.PHONY: all release clean dox test test_ci arta discord webui
 
-all: arta discord
+all: arta discord webui
 
 arta: $(BIN)
 
 discord: $(DISCORD_BIN)
+
+webui: ${WEBUI_BIN}
 
 release:
 	$(MAKE) all CFLAGS="$(RELEASE_CFLAGS)"
@@ -60,10 +69,16 @@ $(BIN): $(OBJ) $(COMMON_OBJ)| $(BINDIR)
 $(DISCORD_BIN): $(DISCORD_OBJ) $(COMMON_OBJ)| $(BINDIR)
 	$(CC) $(LDFLAGS) -o $(DISCORD_BIN) $(DISCORD_OBJ) $(COMMON_OBJ) $(LIB)
 
+$(WEBUI_BIN): $(WEBUI_OBJ) $(COMMON_OBJ)| $(BINDIR)
+	$(CC) $(LDFLAGS) -o $(WEBUI_BIN) $(WEBUI_OBJ) $(COMMON_OBJ) $(LIB)
+
 $(OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -c $<
 
 $(DISCORD_OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -c $<
+
+$(WEBUI_OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -c $<
 
 $(COMMON_OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)

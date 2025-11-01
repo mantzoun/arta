@@ -73,7 +73,7 @@ void DiscordBot::messageCb(std::string message) {
   }
 
   if (messageParts.size() != 3) {
-    logger->error("message errpr: " + message);
+    logger->error("message error: " + message);
     return;
   }
 

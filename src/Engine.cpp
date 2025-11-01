@@ -28,7 +28,15 @@ void Engine::init(void) {
     universe.utilsSet(&utils);
     universe.timeManagerSet(&timeManager);
 
+    io.setLogger(&logger);
+    io.fifoInit("/tmp/gameServer.fifo");
+    io.setConsumer(this);
+
     universe.init();
+}
+
+void Engine::messageCb(std::string message) {
+    logger.debug(message);
 }
 
 }  // namespace arta
