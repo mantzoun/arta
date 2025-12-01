@@ -12,19 +12,15 @@
 #include "civetweb.h"
 #include <json/json.h>
 
-#include "include/IO.h"
 #include "include/Logger.h"
 #include "include/MessageConsumer.h"
+#include "include/MySocket.h"
 
-const char* PIPE_PATH = "/tmp/gameServer.fifo"; // Named pipe path
+std::unordered_map<std::string, mg_connection*> wsClientMap;
+std::mutex wsMapMutex;
+arta::MySocket mySocket;
 
-// --- WebSocket clients ---
-std::vector<mg_connection*> ws_clients;
-std::unordered_map<std::string, mg_connection*> token_to_client;
-std::mutex ws_mutex;
-
-// --- Extract query param token ---
-std::string get_token_from_conn(mg_connection* conn) {
+std::string getTokenFromConn(mg_connection* conn) {
     const char* query = mg_get_request_info(conn)->query_string;
     if (!query) return "";
     std::string qs(query);
@@ -33,36 +29,40 @@ std::string get_token_from_conn(mg_connection* conn) {
     return qs.substr(pos + 6, 16); // take 16 hex chars
 }
 
-// --- Send message to a single client ---
-void send_to_client(const std::string& token, const std::string& msg, const std::string& panel) {
-    std::lock_guard<std::mutex> lock(ws_mutex);
-    auto it = token_to_client.find(token);
-    if (it != token_to_client.end()) {
-        //mg_websocket_write(it->second, MG_WEBSOCKET_OPCODE_TEXT, msg.c_str(), msg.size());
+void writeToWebSocket(mg_connection * conn, const std::string& message, const std::string& panel) {
+    Json::Value msgJson;
+    msgJson["panel"] = panel;
+    msgJson["text"] = message;
+    Json::StreamWriterBuilder writer;
+    std::string msgStr = Json::writeString(writer, msgJson);
 
-        Json::Value msgJson;
-        msgJson["panel"] = panel;
-        msgJson["text"] = msg;
-        Json::StreamWriterBuilder writer;
-        std::string msgStr = Json::writeString(writer, msgJson);
+    mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_TEXT, msgStr.c_str(), msgStr.size());
+}
 
-        mg_websocket_write(it->second, MG_WEBSOCKET_OPCODE_TEXT, msgStr.c_str(), msgStr.size());
+void broadcast(const std::string& msg, const std::string& panel) {
+    std::lock_guard<std::mutex> lock(wsMapMutex);
+    for (const auto & [ key, value ] : wsClientMap) {
+        writeToWebSocket(value, msg, panel);
     }
 }
 
-// --- Send command to the engine via named pipe ---
-std::string send_to_engine(const std::string& cmd) {
-    std::ofstream pipe(PIPE_PATH);
-    if (!pipe.is_open()) return "Error: cannot open pipe";
-    pipe << cmd << std::endl;
-    pipe.close();
-
-    // For demo purposes, we just echo back
-    return "Engine received: " + cmd;
+void sendToClient(const std::string& token, const std::string& msg, const std::string& panel) {
+    std::lock_guard<std::mutex> lock(wsMapMutex);
+    auto it = wsClientMap.find(token);
+    if (it != wsClientMap.end()) {
+        writeToWebSocket(it->second, msg, panel);
+    }
 }
 
-// --- HTTP POST /command handler ---
-int command_handler(struct mg_connection* conn, void*) {
+//TODO Sanitize, incorrect IDs, empty messages etc.
+std::string sendToEngine(const std::string& cmd) {
+    if (! mySocket.sendMessage(cmd)) {
+        return "Error forwarding to engine: " + cmd;
+    }
+    return "";
+}
+
+int commandHandler(struct mg_connection* conn, void*) {
     char buf[1024];
     int len = mg_read(conn, buf, sizeof(buf) - 1);
     if (len < 0) len = 0;
@@ -72,14 +72,7 @@ int command_handler(struct mg_connection* conn, void*) {
     // Sanitize input (ASCII printable only)
     cmd.erase(std::remove_if(cmd.begin(), cmd.end(), [](char c){ return c < 0x20 || c > 0x7E; }), cmd.end());
 
-    std::string response = send_to_engine(cmd);
-
-    // Broadcast to WebSocket clients
-    {
-        std::lock_guard<std::mutex> lock(ws_mutex);
-        for (auto* ws : ws_clients)
-            mg_websocket_write(ws, MG_WEBSOCKET_OPCODE_TEXT, response.c_str(), response.size());
-    }
+    std::string response = sendToEngine(cmd);
 
     // Return direct response to the HTTP client
     mg_printf(conn,
@@ -89,10 +82,10 @@ int command_handler(struct mg_connection* conn, void*) {
 }
 
 // --- WebSocket handlers ---
-int ws_connect(const struct mg_connection*, void*) { return 0; }
+int wsConnect(const struct mg_connection*, void*) { return 0; }
 
-void ws_ready(struct mg_connection* conn, void* user_data) {
-    std::string token = get_token_from_conn(conn);
+void wsRready(struct mg_connection* conn, void* userData) {
+    std::string token = getTokenFromConn(conn);
     if (token.empty()) {
         mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_TEXT,
                            "Missing token", strlen("Missing token"));
@@ -101,34 +94,29 @@ void ws_ready(struct mg_connection* conn, void* user_data) {
 
     std::cout << token + "\n";
 
-    std::lock_guard<std::mutex> lock(ws_mutex);
-    token_to_client[token] = conn;
+    std::lock_guard<std::mutex> lock(wsMapMutex);
+    wsClientMap[token] = conn;
 }
 
-void ws_closed(const mg_connection* conn, void* user_data) {
-    std::lock_guard<std::mutex> lock(ws_mutex);
-    for (auto it = token_to_client.begin(); it != token_to_client.end(); ++it) {
+void wsClosed(const mg_connection* conn, void* userData) {
+    std::lock_guard<std::mutex> lock(wsMapMutex);
+    for (auto it = wsClientMap.begin(); it != wsClientMap.end(); ++it) {
         if (it->second == conn) {
-            token_to_client.erase(it);
+            wsClientMap.erase(it);
             break;
         }
     }
 }
 
-// void ws_closed(struct mg_connection* conn, void*) {
-//     std::lock_guard<std::mutex> lock(ws_mutex);
-//     ws_clients.erase(std::remove(ws_clients.begin(), ws_clients.end(), conn), ws_clients.end());
-// }
-
-int ws_receive(struct mg_connection* conn, int, char* msg, size_t len, void*) {
+int wsReceive(struct mg_connection* conn, int, char* msg, size_t len, void*) {
     std::string incoming(msg, len);
     std::cout << "[WS] Received from client: " << incoming << std::endl;
-    // Optionally forward to engine
-    std::string response = send_to_engine(incoming);
+
+    std::string response = sendToEngine(incoming);
 
     // Broadcast result back to all WS clients
-    std::lock_guard<std::mutex> lock(ws_mutex);
-    std::string token = get_token_from_conn(conn);
+    std::lock_guard<std::mutex> lock(wsMapMutex);
+    std::string token = getTokenFromConn(conn);
     if (!token.empty()) {
         mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_TEXT, incoming.c_str(), incoming.size());
     }
@@ -136,17 +124,16 @@ int ws_receive(struct mg_connection* conn, int, char* msg, size_t len, void*) {
     return 1; // must return non-zero to indicate success
 }
 
-namespace arta {
-    class temp : public MessageConsumer {
-        private:
-        public:
-            IO io;
-            Logger logger = Logger(ARTA_LOG_DEBUG);
-            inline void messageCb(std::string message) {
-                logger.debug(message);
-                send_to_client("6737637657676357", "test message", "response");
-            }
-    };
+void callback(std::string message) {
+    auto pos = message.find(' ');
+    std::string playerId = message.substr(0, pos);
+    std::string response  = message.substr(pos + 1);
+
+    if (playerId == "broadcast") {
+        broadcast(response, "updates");
+    } else {
+        sendToClient(playerId, response, "response");
+    }
 }
 
 int main() {
@@ -157,22 +144,26 @@ int main() {
         nullptr
     };
 
-    arta::temp temp;
-    temp.io.setLogger(&temp.logger);
-    temp.io.fifoInit("/tmp/webuiServer.fifo");
-    temp.io.setConsumer(&temp);
+    mySocket.init(1);
 
     mg_callbacks callbacks{};
     mg_context* ctx = mg_start(&callbacks, nullptr, options);
 
     // HTTP POST endpoint
-    mg_set_request_handler(ctx, "/command", command_handler, nullptr);
+    mg_set_request_handler(ctx, "/command", commandHandler, nullptr);
 
     // WebSocket endpoint
-    mg_set_websocket_handler(ctx, "/ws", ws_connect, ws_ready, ws_receive, ws_closed, nullptr);
+    mg_set_websocket_handler(ctx, "/ws", wsConnect, wsRready, wsReceive, wsClosed, nullptr);
 
     std::cout << "Server running at http://localhost:8080\n";
 
-    // Keep server alive
-    for (;;) std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::string message= "";
+    while (true) {
+        message = mySocket.popFromQueue();
+        while (message != "") {
+            callback(message);
+            message = mySocket.popFromQueue();
+        }
+        usleep(50);
+    }
 }

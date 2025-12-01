@@ -11,7 +11,10 @@
 #include <iostream>
 #include <map>
 
+#include <chrono>
+
 #include "include/Engine.h"
+#include "include/MySocket.h"
 
 // #include "ext/json.hpp"
 // #include "include/lux_utils.h"
@@ -40,6 +43,13 @@ namespace arta {
 //     j.at("bot_token").get_to(c.bot_token);
 // }
 
+MySocket                mySocket;
+Engine                  engine;
+
+void messageSend(std::string message) {
+    mySocket.sendMessage(message);
+}
+
 int main(int argc, char **argv) {
     // logger.info("Starting Discord Bot\n");
     // from_json(load_file("config.json"), config);
@@ -67,14 +77,29 @@ int main(int argc, char **argv) {
     //     engine.create_channels();
     // #endif /* ENGINE_INIT_FROM_DISCORD */
 
-    Engine engine;
     engine.init();
+    engine.messageCbSet(messageSend);
+    mySocket.init(0);
 
-    while (1) {
-        // game_loop();
-        // engine.execute_game_loop();
-        engine.tik();
-        usleep(60 * 1000 * 1000);
+    auto now = std::chrono::system_clock::now();
+    auto nextTrigger = time_point_cast<std::chrono::minutes>(now) + std::chrono::minutes(1);
+
+    std::string message= "";
+
+    while (true) {
+        message = mySocket.popFromQueue();
+        while (message != "") {
+            engine.messageHandle(message);
+            message = mySocket.popFromQueue();
+        }
+
+        auto now = std::chrono::system_clock::now();
+        if (now >= nextTrigger) {
+            engine.tik();
+            nextTrigger += std::chrono::minutes(1);
+        }
+
+        usleep(50);
     }
 }
 }  // namespace arta

@@ -16,8 +16,8 @@
 #include "include/Logger.h"
 #include "include/TimeManager.h"
 #include "include/Universe.h"
-#include "include/IO.h"
 #include "include/MessageConsumer.h"
+#include "include/Character.h"
 
 namespace arta {
 /**
@@ -25,20 +25,24 @@ namespace arta {
  *
  * @brief Engine class
  */
-class Engine : public MessageConsumer  {
+class Engine {
    private:
     TimeManager timeManager;
     Logger logger = Logger(ARTA_LOG_DEBUG);
     Utils utils;
-    IO    io;
 
     Universe universe = Universe(&logger, &timeManager, &utils, utils.idGet(), "Euclid");
+
+    std::map<std::string, Character> characterMap;
+
+    void messageUI(std::string message);
 
    public:
     void tik(void);
     void init(void);
-
-    void messageCb(std::string message) override;
+    void (*messageCb)(std::string);
+    void messageCbSet(void (*cb)(std::string));
+    void messageHandle(std::string message);
 
     friend void to_json(nlohmann::json& j, \
                      Engine& e);  // NOLINT(runtime/references)

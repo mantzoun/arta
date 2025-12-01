@@ -58,6 +58,7 @@ class Utils {
 
     int roll(int bound);
     int roll(int lower_bound, int upper_bound);
+    std::vector<std::string> tokenize(const std::string &string_with_spaces);
 
     int sendMessage(std::string message);
 };

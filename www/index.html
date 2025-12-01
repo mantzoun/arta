@@ -47,18 +47,22 @@ const genButton = document.getElementById("generate-token");
 let userToken = localStorage.getItem("userToken");
 if (userToken) {
     tokenInput.value = userToken;
-    genButton.style.display = "none";
+    // genButton.style.display = "none";
 } else {
     genButton.style.display = "inline-block";
 }
 
 // Generate random 64-bit hex token
 genButton.onclick = () => {
+    if (!confirm("Generate a new token? This will replace your existing one.")) {
+        return; // user cancelled
+    }
+
     const rand64bit = crypto.getRandomValues(new Uint32Array(2));
     userToken = rand64bit[0].toString(16).padStart(8,'0') + rand64bit[1].toString(16).padStart(8,'0');
     tokenInput.value = userToken;
     localStorage.setItem("userToken", userToken);
-    genButton.style.display = "none";
+    //genButton.style.display = "none";
 };
 
 // If user manually changes the token, save it
@@ -93,10 +97,18 @@ ws.onmessage = e => {
     }
 };
 
+document.getElementById("cmd").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();   // optional, prevents form submit / newline
+        sendCmd();
+    }
+});
+
 // --- Send command via POST ---
 async function sendCmd() {
     const cmdInput = document.getElementById("cmd");
-    const cmd = cmdInput.value.trim();
+    const id = document.getElementById("user-token");
+    const cmd = id.value.trim() + " " + cmdInput.value.trim();
     if (!cmd) return;
     cmdInput.value = "";
 

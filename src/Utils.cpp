@@ -45,4 +45,12 @@ int Utils::sendMessage(std::string message) {
     close(fd);
     return 0;
 }
+
+std::vector<std::string> Utils::tokenize(const std::string &string_with_spaces) {
+    std::istringstream iss(string_with_spaces);
+    std::vector<std::string> tokens;
+    std::string token;
+    while (iss >> token) tokens.push_back(token);
+    return tokens;
+}
 }  // namespace arta

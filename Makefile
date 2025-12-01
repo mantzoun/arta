@@ -27,7 +27,7 @@ LIB = -ldpp \
 FILES = Main.cpp TimeManager.cpp Entity.cpp Universe.cpp Engine.cpp System.cpp Area.cpp Modifier.cpp
 DISCORD_FILES = DiscordMain.cpp DiscordBot.cpp DiscordChannel.cpp DiscordGuild.cpp DiscordCommands.cpp
 WEBUI_FILES = WebUI.cpp
-COMMON_FILES = Logger.cpp IO.cpp Utils.cpp
+COMMON_FILES = Logger.cpp Utils.cpp MySocket.cpp
 
 TEST_FILES = test_main.cpp
 
@@ -101,7 +101,7 @@ dox:  | $(DOCDIR)
 	$(DOX) $(DOXYFILE)
 
 cpplint:
-	@cpplint --linelength=120 --filter=-build/c++11,-whitespace/indent,-runtime/indentation_namespace $(SRC) $(INCDIR)/*
+	@cpplint --linelength=120 --filter=-build/c++20,-whitespace/indent,-runtime/indentation_namespace $(SRC) $(INCDIR)/*
 
 cppcheck:
 	@cppcheck $(SRC) --force --enable=all --inconclusive --error-exitcode=1 --suppress=unmatchedSuppression --suppress=missingIncludeSystem --suppress=missingInclude -I$(INCDIR) $(EXTDIR)

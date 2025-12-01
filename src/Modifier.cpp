@@ -10,7 +10,7 @@ namespace arta {
 ConsumerModifierEffect * planetaryWar(EffectConsumer& consumer);
 
 ModifierEntry AreaModifiers[] = {
-    { planetaryWar, 100 },
+    { planetaryWar, 10 },
 };
 
 ModifierEntry SystemModifiers[] = {

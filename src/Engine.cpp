@@ -28,15 +28,27 @@ void Engine::init(void) {
     universe.utilsSet(&utils);
     universe.timeManagerSet(&timeManager);
 
-    io.setLogger(&logger);
-    io.fifoInit("/tmp/gameServer.fifo");
-    io.setConsumer(this);
-
     universe.init();
 }
 
-void Engine::messageCb(std::string message) {
-    logger.debug(message);
+void Engine::messageCbSet(void (*cb)(std::string)) {
+    messageCb = cb;
+}
+
+void Engine::messageUI(std::string message) {
+    this->messageCb(message);
+}
+
+void Engine::messageHandle(std::string message) {
+    auto tokens = utils.tokenize(message);
+
+    std::string playerId = tokens[0];
+    tokens.erase(tokens.begin());
+
+    if (!characterMap.contains(playerId)) {
+        messageUI(playerId + " " + "player character does not exist. Type \"start\" to create new Character");
+        messageUI("broadcast broadcast test");
+    }
 }
 
 }  // namespace arta
