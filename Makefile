@@ -52,7 +52,7 @@ TSTBIN = $(BINDIR)/test
 
 .PHONY: all release clean dox test test_ci arta discord webui
 
-all: arta discord webui
+all: arta webui
 
 arta: $(BIN)
 
