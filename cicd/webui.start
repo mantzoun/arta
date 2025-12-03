@@ -1,0 +1,7 @@
+if [ -z "$1" ]; then
+    version="dev"
+else
+    version="$1"
+fi
+
+docker run -d --rm --name webui -p 8080:8080 --volume /tmp:/tmp arta-webui:$version

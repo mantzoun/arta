@@ -108,6 +108,10 @@ void MySocket::modeSet(int m) {
     mode = m;
 }
 
+void MySocket::socketPathSet(std::string path) {
+    socketPath = path;
+}
+
 void MySocket::serverLoop(sockaddr_un addr) {
     listen(fd, 1);
 
@@ -172,18 +176,19 @@ void MySocket::clientLoop(sockaddr_un addr) {
     }
 }
 
-int MySocket::init(int mode) {
+int MySocket::init(int mode, std::string socketPath) {
     modeSet(mode);
+    socketPathSet(socketPath);
 
     fd = socket(AF_UNIX, SOCK_STREAM, 0);
     fcntl(fd, F_SETFL, O_NONBLOCK);
 
     sockaddr_un addr{};
     addr.sun_family = AF_UNIX;
-    strcpy(addr.sun_path, path);
+    strcpy(addr.sun_path, socketPath.c_str());
 
     if ( mode == 0) {
-        unlink(path);
+        unlink(socketPath.c_str());
 
         if (bind(fd, (sockaddr*)&addr, sizeof(addr))) {
             std::cout << "failed to bind socket" << "\n";

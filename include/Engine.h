@@ -16,7 +16,6 @@
 #include "include/Logger.h"
 #include "include/TimeManager.h"
 #include "include/Universe.h"
-#include "include/MessageConsumer.h"
 #include "include/Character.h"
 
 namespace arta {

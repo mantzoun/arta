@@ -19,13 +19,12 @@ RELEASE_CFLAGS = -Wall -std=c++20 -Wno-psabi -O3 -ffunction-sections -fdata-sect
 LDFLAGS = -Wl,--gc-sections
 INCLUDES = -I. -I/usr/include/jsoncpp
 
-LIB = -ldpp \
+LIB = \
       -lgcov \
       -lcivetweb \
       -ljsoncpp \
 
-FILES = Main.cpp TimeManager.cpp Entity.cpp Universe.cpp Engine.cpp System.cpp Area.cpp Modifier.cpp
-DISCORD_FILES = DiscordMain.cpp DiscordBot.cpp DiscordChannel.cpp DiscordGuild.cpp DiscordCommands.cpp
+ENGINE_FILES = Main.cpp TimeManager.cpp Entity.cpp Universe.cpp Engine.cpp System.cpp Area.cpp Modifier.cpp
 WEBUI_FILES = WebUI.cpp
 COMMON_FILES = Logger.cpp Utils.cpp MySocket.cpp
 
@@ -34,13 +33,9 @@ TEST_FILES = test_main.cpp
 COMMON_SRC = $(addprefix $(SRCDIR)/,$(COMMON_FILES))
 COMMON_OBJ = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o, $(COMMON_SRC))
 
-SRC = $(addprefix $(SRCDIR)/,$(FILES))
-OBJ = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o, $(SRC))
-BIN = $(BINDIR)/arta
-
-DISCORD_SRC = $(addprefix $(SRCDIR)/,$(DISCORD_FILES))
-DISCORD_OBJ = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o, $(DISCORD_SRC))
-DISCORD_BIN = $(BINDIR)/discord
+ENGINE_SRC = $(addprefix $(SRCDIR)/,$(ENGINE_FILES))
+ENGINE_OBJ = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o, $(ENGINE_SRC))
+ENGINE_BIN = $(BINDIR)/arta
 
 WEBUI_SRC = $(addprefix $(SRCDIR)/,$(WEBUI_FILES))
 WEBUI_OBJ = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o, $(WEBUI_SRC))
@@ -50,32 +45,24 @@ TST = $(addprefix $(TSTDIR)/,$(TEST_FILES))
 TSTOBJ = $(patsubst $(TSTDIR)/%.cpp,$(OBJDIR)/%.o, $(TST))
 TSTBIN = $(BINDIR)/test
 
-.PHONY: all release clean dox test test_ci arta discord webui
+.PHONY: all release clean dox test test_ci arta webui
 
 all: arta webui
 
-arta: $(BIN)
-
-discord: $(DISCORD_BIN)
+arta: $(ENGINE_BIN)
 
 webui: ${WEBUI_BIN}
 
 release:
 	$(MAKE) all CFLAGS="$(RELEASE_CFLAGS)"
 
-$(BIN): $(OBJ) $(COMMON_OBJ)| $(BINDIR)
-	$(CC) $(LDFLAGS) -o $(BIN) $(OBJ) $(COMMON_OBJ) $(LIB)
-
-$(DISCORD_BIN): $(DISCORD_OBJ) $(COMMON_OBJ)| $(BINDIR)
-	$(CC) $(LDFLAGS) -o $(DISCORD_BIN) $(DISCORD_OBJ) $(COMMON_OBJ) $(LIB)
+$(ENGINE_BIN): $(ENGINE_OBJ) $(COMMON_OBJ)| $(BINDIR)
+	$(CC) $(LDFLAGS) -o $(ENGINE_BIN) $(ENGINE_OBJ) $(COMMON_OBJ) $(LIB)
 
 $(WEBUI_BIN): $(WEBUI_OBJ) $(COMMON_OBJ)| $(BINDIR)
 	$(CC) $(LDFLAGS) -o $(WEBUI_BIN) $(WEBUI_OBJ) $(COMMON_OBJ) $(LIB)
 
-$(OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
-	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -c $<
-
-$(DISCORD_OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+$(ENGINE_OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -c $<
 
 $(WEBUI_OBJ): $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
@@ -96,15 +83,25 @@ $(DOCDIR):
 clean:
 	@rm -rf $(OBJDIR) $(BINDIR) $(RELDIR)
 
+containers: engine_container webui_container
+
+engine_container:
+	@docker buildx build --file cicd/engine.Dockerfile -t arta-engine:dev .
+#	@docker buildx build --platform linux/amd64 --file cicd/engine.Dockerfile -t arta-engine:dev .
+
+webui_container:
+	@docker buildx build --file cicd/webui.Dockerfile -t arta-webui:dev .
+#	@docker buildx build --platform linux/amd64 --file cicd/engine.Dockerfile -t arta-webui:dev .
+
 dox:  | $(DOCDIR)
 	@rm -rf $(DOCDIR)
 	$(DOX) $(DOXYFILE)
 
 cpplint:
-	@cpplint --linelength=120 --filter=-build/c++20,-whitespace/indent,-runtime/indentation_namespace $(SRC) $(INCDIR)/*
+	@cpplint --linelength=120 --filter=-build/c++20,-whitespace/indent,-runtime/indentation_namespace $(COMMON_SRC) $(WEBUI_SRC) $(ENGINE_SRC) $(INCDIR)/*
 
 cppcheck:
-	@cppcheck $(SRC) --force --enable=all --inconclusive --error-exitcode=1 --suppress=unmatchedSuppression --suppress=missingIncludeSystem --suppress=missingInclude -I$(INCDIR) $(EXTDIR)
+	@cppcheck $(COMMON_SRC) $(WEBUI_SRC) $(ENGINE_SRC) --force --enable=all --inconclusive --error-exitcode=1 --suppress=unmatchedSuppression --suppress=missingIncludeSystem --suppress=missingInclude -I$(INCDIR) $(EXTDIR)
 
 $(TSTOBJ): $(OBJDIR)/%.o: $(TSTDIR)/%.cpp | $(OBJDIR)
 	$(CC) -o $@ $(CFLAGS) -DUNITTEST $(INCLUDES) -c $<

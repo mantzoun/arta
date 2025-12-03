@@ -25,7 +25,7 @@ namespace arta {
 class MySocket {
     private:
         int mode;  // 0 Server, 1 client
-        const char* path = "/tmp/my_socket";
+        std::string socketPath = "";
         int connected = -1;
         int fd = -1;
         int clientFd = -1;
@@ -36,11 +36,12 @@ class MySocket {
         std::string readBytes(int bytes);
         bool sendString(std::string str);
         void pushToQueue(std::string);
-    public:
+        void socketPathSet(std::string path);
         void modeSet(int m);
+    public:
         bool sendMessage(const std::string message);
         std::string recvMessage(void);
-        int init(int mode);
+        int init(int mode, std::string socketPath);
         void listenForMessages(void);
         void serverLoop(sockaddr_un addr);
         void clientLoop(sockaddr_un addr);

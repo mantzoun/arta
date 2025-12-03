@@ -13,7 +13,7 @@
 #include <json/json.h>
 
 #include "include/Logger.h"
-#include "include/MessageConsumer.h"
+#include "include/Utils.h"
 #include "include/MySocket.h"
 
 std::unordered_map<std::string, mg_connection*> wsClientMap;
@@ -136,15 +136,27 @@ void callback(std::string message) {
     }
 }
 
+typedef struct {
+    std::string socketPath;
+} arta_conf_t;
+
+static arta_conf_t config;
+
+void from_json(const nlohmann::json& j, arta_conf_t & c) {  // NOLINT(runtime/references)
+    j.at("unixSocketPath").get_to(c.socketPath);
+}
+
 int main() {
     // CivetWeb options: serve ./www as document root
     const char* options[] = {
         "document_root", "./www",
-        "listening_ports", "8080",
+        "listening_ports", "0.0.0.0:8080",
         nullptr
     };
 
-    mySocket.init(1);
+    from_json(arta::loadFile("config.json"), config);
+
+    mySocket.init(1, config.socketPath);
 
     mg_callbacks callbacks{};
     mg_context* ctx = mg_start(&callbacks, nullptr, options);
